@@ -1,0 +1,137 @@
+/* Estilos para o componente de clientes */
+
+/* Estilos para aniversários próximos */
+.birthday-countdown {
+    font-size: 0.85em;
+    margin-left: 5px;
+}
+
+.birthday-soon {
+    color: #4CAF50; /* Verde */
+    font-weight: 500;
+}
+
+.birthday-very-soon {
+    color: #FF9800; /* Laranja */
+    font-weight: 600;
+}
+
+.birthday-imminent {
+    color: #F44336; /* Vermelho */
+    font-weight: 700;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Estilos para os cards de clientes */
+.client-card {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.client-summary {
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.client-info {
+    flex: 1;
+}
+
+.client-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.client-mini-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.client-phone, .client-birthday {
+    display: flex;
+    align-items: center;
+}
+
+.client-phone i, .client-birthday i {
+    margin-right: 5px;
+    color: var(--primary-color);
+}
+
+.client-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.edit-btn:hover {
+    background-color: var(--primary-light);
+}
+
+.delete-btn:hover {
+    background-color: var(--danger-light);
+}
+
+.edit-btn i {
+    color: var(--primary-color);
+}
+
+.delete-btn i {
+    color: var(--danger-color);
+}
+
+.client-details {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.client-details.active {
+    padding: 15px;
+    max-height: 300px;
+    border-top: 1px solid var(--border-color);
+}
+
+.detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}

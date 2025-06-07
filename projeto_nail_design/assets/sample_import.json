@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "timestamp": "2023-07-15T14:30:00.000Z",
+  "data": {
+    "clients": [
+      {
+        "name": "Juliana Mendes",
+        "phone": "(11) 99876-5432",
+        "birthday": "10/05",
+        "location": "Pinheiros",
+        "services": "Unhas de fibra, Decoração com strass",
+        "notes": "Prefere cores vibrantes e designs elaborados"
+      },
+      {
+        "name": "Fernanda Almeida",
+        "phone": "(11) 98765-4321",
+        "birthday": "22/08",
+        "location": "Itaim Bibi",
+        "services": "Esmaltação em gel, Nail art minimalista",
+        "notes": "Gosta de designs elegantes e discretos"
+      },
+      {
+        "name": "Patrícia Santos",
+        "phone": "(11) 97654-3210",
+        "birthday": "15/03",
+        "location": "Perdizes",
+        "services": "Alongamento de unhas, Francesinha",
+        "notes": "Sempre marca para o final da tarde"
+      },
+      {
+        "name": "Camila Rodrigues",
+        "phone": "(11) 96543-2109",
+        "birthday": "30/11",
+        "location": "Vila Olímpia",
+        "services": "Unhas de gel, Decoração com adesivos",
+        "notes": "Alérgica a alguns produtos, verificar antes"
+      },
+      {
+        "name": "Beatriz Lima",
+        "phone": "(11) 95432-1098",
+        "birthday": "05/07",
+        "location": "Brooklin",
+        "services": "Manicure tradicional, Pedicure",
+        "notes": "Prefere cores neutras e acabamento natural"
+      }
+    ]
+  }
+}

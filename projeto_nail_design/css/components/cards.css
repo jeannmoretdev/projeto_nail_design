@@ -1,0 +1,117 @@
+/* Card de cliente */
+.client-card {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.client-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Resumo do cliente (linha) */
+.client-summary {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.client-info {
+    flex: 1;
+}
+
+.client-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+}
+
+.client-mini-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.client-phone, .client-birthday {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.client-phone i, .client-birthday i {
+    color: var(--primary-dark);
+    font-size: 0.8rem;
+}
+
+.client-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Detalhes expandidos do cliente */
+.client-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: var(--primary-light);
+    padding: 0 15px;
+}
+
+.client-details.active {
+    max-height: 500px;
+    padding: 15px;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    font-size: 0.9rem;
+}
+
+/* Aniversário */
+.birthday-countdown {
+    font-size: 0.75rem;
+    color: #666;
+    margin-left: 5px;
+    white-space: nowrap;
+    background-color: var(--primary-light);
+    padding: 2px 5px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.upcoming-birthday .birthday-countdown {
+    color: var(--error);
+    font-weight: bold;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .client-mini-details {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .birthday-countdown {
+        margin-left: 20px;
+    }
+}

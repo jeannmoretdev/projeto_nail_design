@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camila Nail Designer</title>
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- CSS de Componentes -->
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/components/notifications.css">
+    <link rel="stylesheet" href="css/components/layout.css">
+    <link rel="stylesheet" href="css/components/settings.css">
+    <link rel="stylesheet" href="css/import-dialog.css">
+    <link rel="stylesheet" href="css/clients.css">
+
+    <!-- Fontes do Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <!-- Ícones elegantes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1 class="logo">Camila</h1>
+        <p class="subtitle">Nail Designer</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" data-page="clients">Clientes</button>
+        <button class="nav-btn" data-page="services">Serviços</button>
+        <button class="nav-btn" data-page="agenda">Agenda</button>
+        <button class="nav-btn" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="settings">Configurações</button>
+    </nav>
+
+    <main>
+        <!-- O conteúdo das páginas será carregado dinamicamente aqui -->
+        <section id="clients" class="page active">
+            <!-- Conteúdo carregado via JavaScript -->
+        </section>
+
+        <section id="services" class="page">
+            <h2>Serviços</h2>
+            <p>Funcionalidade em desenvolvimento</p>
+        </section>
+
+        <section id="agenda" class="page">
+            <h2>Agenda</h2>
+            <p>Funcionalidade em desenvolvimento</p>
+        </section>
+
+        <section id="dashboard" class="page">
+            <h2>Dashboard</h2>
+            <p>Funcionalidade em desenvolvimento</p>
+        </section>
+        
+        <section id="settings" class="page">
+            <!-- Conteúdo carregado via JavaScript -->
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/database.js"></script>
+    <script src="js/templates/clientsTemplate.js"></script>
+    <script src="js/templates/settingsTemplate.js"></script>
+    <script src="js/components/navigation.js"></script>
+    <script src="js/components/clients.js"></script>
+    <script src="js/components/notifications.js"></script>
+    <script src="js/components/settings.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+/* Estilos para a página de configurações */
+.settings-container {
+    background-color: var(--card-background);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.settings-section {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--primary-light);
+}
+
+.settings-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.settings-section h3 {
+    color: var(--primary-dark);
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.settings-description {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: var(--primary-light);
+    border-radius: 8px;
+}
+
+.setting-item label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.setting-item select {
+    padding: 8px 12px;
+    border: 1px solid var(--primary-light);
+    border-radius: 5px;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.settings-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.import-container {
+    position: relative;
+}
+
+.import-container label {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.status-message {
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    display: none;
+}
+
+.status-message.success {
+    display: block;
+    background-color: rgba(46, 204, 113, 0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.status-message.error {
+    display: block;
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+/* Zona de perigo */
+.danger-zone {
+    background-color: rgba(231, 76, 60, 0.05);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.danger-zone h4 {
+    color: var(--error);
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.danger-zone p {
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+}
+
+.danger-btn {
+    background-color: var(--error);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.danger-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .settings-actions {
+        flex-direction: column;
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .setting-item label {
+        margin-bottom: 5px;
+    }
+    
+    .setting-item select {
+        width: 100%;
+    }
+}
