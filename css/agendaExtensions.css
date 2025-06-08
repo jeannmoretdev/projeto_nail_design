@@ -1,0 +1,341 @@
+/* Estilos para extensões da agenda */
+
+/* Definir variáveis CSS caso não existam */
+:root {
+    --danger-color: #dc3545;
+    --danger-dark: #bd2130;
+    --gray: #6c757d;
+    --gray-dark: #5a6268;
+    --text-secondary: #6c757d;
+    --text-primary: #212529;
+}
+
+/* Estilo para opções de novo item nos selects */
+.new-item-option {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: bold;
+    border-top: 1px dashed var(--primary-color);
+    margin-top: 5px;
+    padding-top: 8px;
+}
+
+/* Espaçamento entre botões no modal de detalhes */
+.appointment-action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Estilo para o botão de excluir compromisso */
+.btn-delete-appointment {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-delete-appointment:hover {
+    background-color: var(--danger-dark);
+}
+
+/* Estilo para o botão de editar compromisso */
+.btn-edit-appointment {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-edit-appointment:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Estilo para o botão de fechar detalhes */
+.btn-close-details {
+    background-color: var(--gray);
+    color: var(--text-color);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-close-details:hover {
+    background-color: var(--gray-dark);
+}
+
+/* Estilos para o modal de detalhes */
+#appointment-details-modal .modal-content {
+    max-width: 500px;
+}
+
+.appointment-details-content {
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+}
+
+/* Estilos para o modal de detalhes no tema escuro */
+.theme-dark #appointment-details-modal .modal-content {
+    background-color: var(--card-background-dark, #343a40);
+    color: var(--text-color-dark, #f8f9fa);
+}
+
+.theme-dark .detail-label {
+    color: var(--text-secondary-dark, #adb5bd);
+}
+
+.theme-dark .detail-value {
+    color: var(--text-primary-dark, #f8f9fa);
+}
+
+.theme-dark .btn-close-details {
+    background-color: var(--gray-dark, #5a6268);
+    color: var(--white, #ffffff);
+}
+
+.theme-dark .btn-close-details:hover {
+    background-color: var(--gray, #6c757d);
+}
+
+/* Estilos para os selects de cliente e serviço no modal de compromisso */
+.client-select-container,
+.service-select-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.client-select,
+.service-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-size: 1rem;
+    appearance: none; /* Remove a seta padrão */
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.client-select:focus,
+.service-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-lightest);
+    outline: none;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--primary-color);
+}
+
+/* Estilo para a opção de novo item */
+.client-select option.new-item-option,
+.service-select option.new-item-option {
+    background-color: var(--primary-light);
+    color: var(--white);
+    font-weight: bold;
+    border-top: 1px dashed var(--primary-color);
+    margin-top: 5px;
+    padding-top: 8px;
+}
+
+/* Estilo para o grupo de cliente/serviço no modal */
+.client-service-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.client-service-group .form-group {
+    flex: 1;
+}
+
+/* Estilo para o label */
+.client-service-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Estilo para o ícone dentro do select */
+.select-with-icon {
+    display: flex;
+    align-items: center;
+}
+
+.select-with-icon i {
+    margin-right: 8px;
+    color: var(--primary-color);
+}
+
+/* Estilo para o tema escuro */
+.theme-dark .client-select,
+.theme-dark .service-select {
+    background-color: var(--input-background-dark);
+    color: var(--text-color-dark);
+    border-color: var(--border-color-dark);
+}
+
+.theme-dark .client-select:focus,
+.theme-dark .service-select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.3);
+}
+
+.theme-dark .select-arrow {
+    color: var(--primary-light);
+}
+
+/* Estilo para selects desabilitados */
+.client-select:disabled,
+.service-select:disabled {
+    background-color: var(--gray-200);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.theme-dark .client-select:disabled,
+.theme-dark .service-select:disabled {
+    background-color: var(--gray-800);
+}
+
+/* Animação de foco */
+@keyframes focusPulse {
+    0% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4); }
+    70% { box-shadow: 0 0 0 5px rgba(var(--primary-rgb), 0); }
+    100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0); }
+}
+
+.client-select:focus,
+.service-select:focus {
+    animation: focusPulse 1.5s infinite;
+}
+
+/* Estilo para o placeholder */
+.client-select option:first-child,
+.service-select option:first-child {
+    color: var(--text-secondary);
+}
+
+/* Estilo para quando o select tem um valor selecionado */
+.client-select.has-value,
+.service-select.has-value {
+    border-color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Estilo para o container quando o select está focado */
+.client-select-container.focused,
+.service-select-container.focused {
+    position: relative;
+}
+
+.client-select-container.focused::after,
+.service-select-container.focused::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
+/* Estilos para grupos de opções (categorias de serviços) */
+.service-select optgroup {
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 5px 0;
+    border-top: 1px solid var(--border-color);
+    margin-top: 5px;
+}
+
+.service-select optgroup option {
+    font-weight: normal;
+    color: var(--text-color);
+    padding-left: 10px;
+}
+
+.theme-dark .service-select optgroup {
+    color: var(--primary-light);
+    border-top-color: var(--border-color-dark);
+}
+
+.theme-dark .service-select optgroup option {
+    color: var(--text-color-dark);
+}
+
+/* Melhorar a aparência do dropdown em navegadores modernos */
+.client-select, .service-select {
+    background-image: linear-gradient(45deg, transparent 50%, var(--primary-color) 50%),
+                      linear-gradient(135deg, var(--primary-color) 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px),
+                         calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px,
+                     5px 5px;
+    background-repeat: no-repeat;
+}
+
+.theme-dark .client-select, .theme-dark .service-select {
+    background-image: linear-gradient(45deg, transparent 50%, var(--primary-light) 50%),
+                      linear-gradient(135deg, var(--primary-light) 50%, transparent 50%);
+}
+
+/* Remover a seta do select para navegadores que suportam a propriedade appearance */
+@supports (-webkit-appearance: none) or (-moz-appearance: none) or (appearance: none) {
+    .client-select, .service-select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    
+    /* Esconder a seta nativa em IE10+ */
+    .client-select::-ms-expand, .service-select::-ms-expand {
+        display: none;
+    }
+    
+    /* Remover a seta personalizada quando usamos o background-image */
+    .select-arrow {
+        display: none;
+    }
+}

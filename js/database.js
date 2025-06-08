@@ -39,8 +39,6 @@ const DB = {
                     const appointmentsStore = db.createObjectStore('appointments', { keyPath: 'id', autoIncrement: true });
                     appointmentsStore.createIndex('startDate', 'startDate', { unique: false });
                     appointmentsStore.createIndex('clientId', 'clientId', { unique: false });
-                    appointmentsStore.createIndex('serviceId', 'serviceId', { unique: false });
-                    appointmentsStore.createIndex('status', 'status', { unique: false });
                 }
             };
         });
@@ -446,21 +444,45 @@ const DB = {
         getByDateRange: function(startDate, endDate) {
             return new Promise((resolve, reject) => {
                 try {
-                    // Converter para strings ISO para comparação consistente
-                    const startDateStr = startDate.toISOString();
-                    const endDateStr = endDate.toISOString();
+                    const transaction = DB.db.transaction(['appointments'], 'readonly');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.getAll();
                     
-                    this.getAll()
-                        .then(appointments => {
-                            // Filtrar compromissos que estão no intervalo de datas
-                            const filteredAppointments = appointments.filter(appointment => {
-                                return appointment.startDate <= endDateStr && 
-                                       appointment.endDate >= startDateStr;
-                            });
+                    request.onsuccess = () => {
+                        const appointments = request.result;
+                        
+                        // Se não temos datas válidas, retornar todos os compromissos
+                        if (!startDate || !endDate) {
+                            resolve(appointments);
+                            return;
+                        }
+                        
+                        // Filtrar por intervalo de datas
+                        const filtered = appointments.filter(appointment => {
+                            // Verificar se temos datas válidas
+                            if (!appointment.startDate || !appointment.endDate) {
+                                return false;
+                            }
                             
-                            resolve(filteredAppointments);
-                        })
-                        .catch(reject);
+                            const appointmentStart = new Date(appointment.startDate);
+                            const appointmentEnd = new Date(appointment.endDate);
+                            const rangeStart = new Date(startDate);
+                            const rangeEnd = new Date(endDate);
+                            
+                            // Verificar se o compromisso está dentro do intervalo
+                            return (
+                                (appointmentStart >= rangeStart && appointmentStart <= rangeEnd) ||
+                                (appointmentEnd >= rangeStart && appointmentEnd <= rangeEnd) ||
+                                (appointmentStart <= rangeStart && appointmentEnd >= rangeEnd)
+                            );
+                        });
+                        
+                        resolve(filtered);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
+                    };
                 } catch (error) {
                     reject(error);
                 }

@@ -1,67 +1,134 @@
-/* Modal */
+/* Estilos para modais */
 .modal {
     display: none;
     position: fixed;
-    top: 0;
+    z-index: 1000;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
     overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
-    background-color: var(--white);
-    margin: 50px auto;
+    background-color: var(--card-background);
+    margin: 10% auto;
     padding: 20px;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 90%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 80%;
+    width: 500px;
     position: relative;
-    animation: modalSlideDown 0.3s ease;
-}
-
-@keyframes modalSlideDown {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    transition: all 0.3s ease;
 }
 
 .close-modal {
     position: absolute;
-    top: 15px;
     right: 15px;
+    top: 10px;
     font-size: 1.5rem;
-    color: var(--secondary-color);
-    background: none;
-    border: none;
+    font-weight: bold;
+    color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: color 0.2s;
 }
 
 .close-modal:hover {
-    color: var(--primary-dark);
+    color: var(--error);
 }
 
-.modal h2 {
-    color: var(--primary-dark);
+.modal h2, .modal h3 {
+    margin-top: 0;
+    color: var(--primary-color);
     margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--primary-light);
+}
+
+/* Tema escuro */
+.theme-dark .modal-content {
+    background-color: var(--card-background-dark);
+    color: var(--text-color-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+.theme-dark .close-modal {
+    color: var(--text-secondary-dark);
+}
+
+.theme-dark .close-modal:hover {
+    color: var(--error-light);
+}
+
+.theme-dark .modal h2, 
+.theme-dark .modal h3 {
+    color: var(--primary-light);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
     .modal-content {
-        margin: 30px auto;
+        width: 90%;
+        margin: 20% auto;
         padding: 15px;
     }
 }
 
-@media (max-width: 480px) {
-    .modal-content {
-        margin: 20px auto;
-        padding: 15px;
-        width: 95%;
+/* Animação de entrada do modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal.active .modal-content {
+    animation: modalFadeIn 0.3s forwards;
+}
+
+/* Estilos para modal de detalhes (posicionamento específico) */
+.details-modal .modal-content {
+    position: absolute;
+    transform: none;
+    margin: 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
+/* Estilos para modais de confirmação */
+.confirm-modal .modal-content {
+    max-width: 400px;
+}
+
+.confirm-modal .modal-message {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.confirm-modal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.confirm-modal .btn-confirm {
+    background-color: var(--error);
+    color: white;
+}
+
+.confirm-modal .btn-confirm:hover {
+    background-color: var(--error-dark);
+}
+
+.confirm-modal .btn-cancel {
+    background-color: var(--gray);
+    color: white;
+}
+
+.confirm-modal .btn-cancel:hover {
+    background-color: var(--gray-dark);
 }

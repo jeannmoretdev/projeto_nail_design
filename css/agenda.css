@@ -252,6 +252,71 @@
     color: var(--error-dark);
 }
 
+/* Estilo para opções de novo item nos selects */
+.new-item-option {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: bold;
+    border-top: 1px dashed var(--primary-color);
+    margin-top: 5px;
+    padding-top: 8px;
+}
+
+/* Estilo para o botão de excluir compromisso */
+.btn-delete-appointment {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-delete-appointment:hover {
+    background-color: var(--danger-dark);
+}
+
+/* Espaçamento entre botões no modal de detalhes */
+.appointment-action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Estilo para o botão de editar compromisso */
+.btn-edit-appointment {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-edit-appointment:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Estilo para o botão de fechar detalhes */
+.btn-close-details {
+    background-color: var(--gray);
+    color: var(--text-color);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-close-details:hover {
+    background-color: var(--gray-dark);
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .nail-design-calendar {
@@ -306,4 +371,126 @@
 
 .theme-dark .nail-design-calendar .fc-timegrid-slot-label {
     color: var(--text-color-dark);
+}
+
+/* Estilos para visualização de lista */
+.fc-list-table {
+    border: none !important;
+}
+
+.fc-list-day-cushion {
+    background-color: var(--primary-light) !important;
+    color: white !important;
+}
+
+.fc-list-event:hover td {
+    background-color: var(--primary-lightest) !important;
+}
+
+.fc-list-event-title a {
+    color: var(--primary-color) !important;
+    font-weight: 500 !important;
+}
+
+.fc-list-event-time {
+    font-weight: 600 !important;
+    color: var(--text-color) !important;
+}
+
+.fc-list-empty {
+    background-color: var(--card-background) !important;
+    padding: 20px !important;
+    text-align: center !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Tema escuro para visualização de lista */
+.theme-dark .fc-list-day-cushion {
+    background-color: var(--primary-dark) !important;
+    color: white !important;
+}
+
+.theme-dark .fc-list-event:hover td {
+    background-color: rgba(var(--primary-rgb), 0.2) !important;
+}
+
+.theme-dark .fc-list-event-title a {
+    color: var(--primary-light) !important;
+}
+
+.theme-dark .fc-list-event-time {
+    color: var(--text-color-dark) !important;
+}
+
+.theme-dark .fc-list-empty {
+    background-color: var(--card-background-dark) !important;
+    color: var(--text-secondary-dark) !important;
+}
+
+/* Estilos para números de semana */
+.nail-design-calendar .fc-week-number {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.nail-design-calendar .fc-daygrid-week-number {
+    background-color: var(--primary-lightest);
+    color: var(--primary-color);
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.theme-dark .nail-design-calendar .fc-daygrid-week-number {
+    background-color: var(--primary-dark);
+    color: var(--white);
+}
+
+/* Estilos para visualização de 24 horas */
+.fc-timegrid-slot {
+    height: 2.5em !important; /* Ajustar altura dos slots para evitar que a página fique muito longa */
+}
+
+/* Destacar horas noturnas com cor diferente */
+.fc-timegrid-slot[data-time^="00:"],
+.fc-timegrid-slot[data-time^="01:"],
+.fc-timegrid-slot[data-time^="02:"],
+.fc-timegrid-slot[data-time^="03:"],
+.fc-timegrid-slot[data-time^="04:"],
+.fc-timegrid-slot[data-time^="05:"],
+.fc-timegrid-slot[data-time^="22:"],
+.fc-timegrid-slot[data-time^="23:"] {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.theme-dark .fc-timegrid-slot[data-time^="00:"],
+.theme-dark .fc-timegrid-slot[data-time^="01:"],
+.theme-dark .fc-timegrid-slot[data-time^="02:"],
+.theme-dark .fc-timegrid-slot[data-time^="03:"],
+.theme-dark .fc-timegrid-slot[data-time^="04:"],
+.theme-dark .fc-timegrid-slot[data-time^="05:"],
+.theme-dark .fc-timegrid-slot[data-time^="22:"],
+.theme-dark .fc-timegrid-slot[data-time^="23:"] {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para o campo de título do compromisso */
+#appointment-title {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+/* Indicar campos opcionais */
+label[for="appointment-client"],
+label[for="appointment-service"] {
+    color: var(--text-secondary);
+}
+
+label[for="appointment-client"]::after,
+label[for="appointment-service"]::after {
+    font-size: 0.85em;
+    font-style: italic;
+    color: var(--text-secondary);
 }

@@ -1,327 +1,413 @@
 // Utilitários para o componente de Agenda
 const AgendaUtils = {
-    // Verificar se duas datas são o mesmo dia
+    // ===== FUNÇÕES DE MANIPULAÇÃO DE DATAS =====
+    
+    // Verifica se duas datas são o mesmo dia
     isSameDay: function(date1, date2) {
-        return date1.getFullYear() === date2.getFullYear() &&
-               date1.getMonth() === date2.getMonth() &&
-               date1.getDate() === date2.getDate();
+        if (!date1 || !date2) return false;
+        
+        const d1 = new Date(date1);
+        const d2 = new Date(date2);
+        
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
     },
     
-    // Obter o primeiro dia da semana (domingo) para uma data
+    // Obtém o primeiro dia da semana (domingo) para uma data
     getStartOfWeek: function(date) {
-        const startOfWeek = new Date(date);
-        const day = startOfWeek.getDay(); // 0 = domingo, 1 = segunda, ...
-        startOfWeek.setDate(startOfWeek.getDate() - day);
-        startOfWeek.setHours(0, 0, 0, 0);
-        return startOfWeek;
+        const d = new Date(date);
+        const day = d.getDay(); // 0 = domingo, 1 = segunda, etc.
+        
+        // Voltar para o domingo
+        d.setDate(d.getDate() - day);
+        
+        // Definir para o início do dia (00:00:00)
+        d.setHours(0, 0, 0, 0);
+        
+        return d;
     },
     
-    // Obter o último dia da semana (sábado) para uma data
+    // Obtém o último dia da semana (sábado) para uma data
     getEndOfWeek: function(date) {
-        const endOfWeek = this.getStartOfWeek(date);
-        endOfWeek.setDate(endOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
-        return endOfWeek;
+        const d = new Date(date);
+        const day = d.getDay(); // 0 = domingo, 1 = segunda, etc.
+        
+        // Avançar para o sábado
+        d.setDate(d.getDate() + (6 - day));
+        
+        // Definir para o final do dia (23:59:59)
+        d.setHours(23, 59, 59, 999);
+        
+        return d;
     },
     
-    // Obter o primeiro dia do mês
+    // Obtém o primeiro dia do mês
     getStartOfMonth: function(date) {
-        const startOfMonth = new Date(date);
-        startOfMonth.setDate(1);
-        startOfMonth.setHours(0, 0, 0, 0);
-        return startOfMonth;
+        const d = new Date(date);
+        d.setDate(1);
+        d.setHours(0, 0, 0, 0);
+        return d;
     },
     
-    // Obter o último dia do mês
+    // Obtém o último dia do mês
     getEndOfMonth: function(date) {
-        const endOfMonth = new Date(date);
-        endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-        endOfMonth.setDate(0);
-        endOfMonth.setHours(23, 59, 59, 999);
-        return endOfMonth;
+        const d = new Date(date);
+        d.setMonth(d.getMonth() + 1);
+        d.setDate(0);
+        d.setHours(23, 59, 59, 999);
+        return d;
     },
     
-    // Formatar data para input type="date"
+    // Formata data para input HTML (YYYY-MM-DD)
     formatDateForInput: function(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        if (!date) return '';
+        
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        
         return `${year}-${month}-${day}`;
     },
     
-    // Formatar hora para input type="time"
+    // Formata hora para input HTML (HH:MM)
     formatTimeForInput: function(date) {
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
+        if (!date) return '';
+        
+        const d = new Date(date);
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        
         return `${hours}:${minutes}`;
     },
     
-    // Renderizar compromissos para um dia específico (visualização diária/semanal)
-    renderAppointmentsForDay: function(container, date, appointments, onClickCallback, onEmptySpaceClick) {
-        // Filtrar compromissos para o dia específico
-        const dayAppointments = appointments.filter(appointment => {
-            const appointmentDate = new Date(appointment.startDate);
-            return this.isSameDay(appointmentDate, date);
-        });
+    // ===== FUNÇÕES DE RENDERIZAÇÃO DE COMPROMISSOS =====
+    
+    // Renderiza compromissos para um dia específico
+    renderAppointmentsForDay: function(appointments, date, container) {
+        if (!container) return;
+        
+        // Limpar container
+        container.innerHTML = '';
+        
+        // Filtrar compromissos para o dia
+        const dayAppointments = appointments.filter(appointment => 
+            this.isSameDay(appointment.startDate, date)
+        );
         
         // Ordenar por hora de início
-        dayAppointments.sort((a, b) => {
-            return new Date(a.startDate) - new Date(b.startDate);
-        });
+        dayAppointments.sort((a, b) => 
+            new Date(a.startDate) - new Date(b.startDate)
+        );
         
-        // Adicionar compromissos à grade
+        // Se não houver compromissos, mostrar mensagem
+        if (dayAppointments.length === 0) {
+            container.innerHTML = '<p class="no-appointments">Nenhum compromisso para este dia</p>';
+            return;
+        }
+        
+        // Renderizar cada compromisso
         dayAppointments.forEach(appointment => {
-            const startDate = new Date(appointment.startDate);
-            const endDate = new Date(appointment.endDate);
+            const appointmentEl = document.createElement('div');
+            appointmentEl.className = `appointment status-${appointment.status || 'agendado'}`;
+            appointmentEl.dataset.id = appointment.id;
             
-            // Calcular posição e altura
-            const startHour = startDate.getHours() + startDate.getMinutes() / 60;
-            const endHour = endDate.getHours() + endDate.getMinutes() / 60;
-            
-            // Ajustar para o horário de início da grade (7h)
-            const top = (startHour - 7) * 60;
-            const height = (endHour - startHour) * 60;
-            
-            // Criar elemento do compromisso
-            const appointmentElement = document.createElement('div');
-            appointmentElement.className = `appointment status-${appointment.status}`;
-            appointmentElement.style.top = `${top}px`;
-            appointmentElement.style.height = `${height}px`;
-            
-            // Formatar hora
-            const startTimeStr = startDate.toLocaleTimeString('pt-BR', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
+            // Formatar horário
+            const startTime = new Date(appointment.startDate).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
             });
             
-            const endTimeStr = endDate.toLocaleTimeString('pt-BR', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
+            const endTime = new Date(appointment.endDate).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
             });
             
-            // Conteúdo do compromisso
-            appointmentElement.innerHTML = `
-                <div class="appointment-time">${startTimeStr} - ${endTimeStr}</div>
-                <div class="appointment-title">${appointment.title}</div>
+            // Construir HTML do compromisso
+            appointmentEl.innerHTML = `
+                <div class="appointment-time">${startTime} - ${endTime}</div>
+                <div class="appointment-details">
+                    <div class="appointment-title">${appointment.title}</div>
+                    ${appointment.clientName ? `<div class="appointment-client">${appointment.clientName}</div>` : ''}
+                    ${appointment.serviceName ? `<div class="appointment-service">${appointment.serviceName}</div>` : ''}
+                </div>
+                <div class="appointment-actions">
+                    <button class="edit-btn" title="Editar"><i class="fas fa-pen"></i></button>
+                    <button class="delete-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                </div>
             `;
             
-            // Adicionar informações do cliente se disponível
-            if (appointment.clientId) {
-                const clientElement = document.createElement('div');
-                clientElement.className = 'appointment-client';
-                clientElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando...';
-                
-                appointmentElement.appendChild(clientElement);
-                
-                // Buscar informações do cliente
-                DB.clients.getById(appointment.clientId)
-                    .then(client => {
-                        if (client) {
-                            clientElement.innerHTML = `<i class="fas fa-user"></i> ${client.name}`;
-                        } else {
-                            clientElement.innerHTML = '';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao carregar cliente:', error);
-                        clientElement.innerHTML = '';
+            // Adicionar ao container
+            container.appendChild(appointmentEl);
+            
+            // Adicionar eventos
+            const editBtn = appointmentEl.querySelector('.edit-btn');
+            const deleteBtn = appointmentEl.querySelector('.delete-btn');
+            
+            if (editBtn) {
+                editBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    // Disparar evento personalizado para edição
+                    const editEvent = new CustomEvent('edit-appointment', {
+                        detail: { appointmentId: appointment.id }
                     });
+                    document.dispatchEvent(editEvent);
+                });
             }
             
-            // Adicionar evento de clique
-            appointmentElement.addEventListener('click', (event) => {
-                event.stopPropagation();
-                onClickCallback(appointment.id);
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    // Disparar evento personalizado para exclusão
+                    const deleteEvent = new CustomEvent('delete-appointment', {
+                        detail: { appointmentId: appointment.id }
+                    });
+                    document.dispatchEvent(deleteEvent);
+                });
+            }
+            
+            // Adicionar evento de clique para mostrar detalhes
+            appointmentEl.addEventListener('click', () => {
+                // Disparar evento personalizado para mostrar detalhes
+                const showDetailsEvent = new CustomEvent('show-appointment-details', {
+                    detail: { appointmentId: appointment.id }
+                });
+                document.dispatchEvent(showDetailsEvent);
             });
-            
-            container.appendChild(appointmentElement);
-        });
-        
-        // Adicionar evento de clique na grade vazia
-        container.addEventListener('click', (event) => {
-            // Verificar se o clique foi diretamente na grade (não em um compromisso)
-            if (event.target === container) {
-                // Calcular hora com base na posição do clique
-                const rect = container.getBoundingClientRect();
-                const offsetY = event.clientY - rect.top + container.scrollTop;
-                
-                // Converter para hora (7h + offsetY / 60)
-                const hour = Math.floor(7 + offsetY / 60);
-                const minute = Math.floor((offsetY % 60) / 60 * 60);
-                
-                // Criar data com a hora calculada
-                const clickDate = new Date(date);
-                clickDate.setHours(hour, minute, 0, 0);
-                
-                onEmptySpaceClick(clickDate);
-            }
         });
     },
     
-    // Renderizar mini-compromissos para visualização mensal
-    renderMiniAppointmentsForDay: function(container, date, appointments, onClickCallback, onMoreClick) {
-        // Filtrar compromissos para o dia específico
-        const dayAppointments = appointments.filter(appointment => {
-            const appointmentDate = new Date(appointment.startDate);
-            return this.isSameDay(appointmentDate, date);
-        });
+    // Renderiza versões mini dos compromissos (para visão mensal)
+    renderMiniAppointmentsForDay: function(appointments, date, container, maxToShow = 3) {
+        if (!container) return;
+        
+        // Limpar container
+        container.innerHTML = '';
+        
+        // Filtrar compromissos para o dia
+        const dayAppointments = appointments.filter(appointment => 
+            this.isSameDay(appointment.startDate, date)
+        );
         
         // Ordenar por hora de início
-        dayAppointments.sort((a, b) => {
-            return new Date(a.startDate) - new Date(b.startDate);
-        });
+        dayAppointments.sort((a, b) => 
+            new Date(a.startDate) - new Date(b.startDate)
+        );
         
-        // Limitar a 3 compromissos visíveis
-        const visibleAppointments = dayAppointments.slice(0, 3);
-        const hiddenCount = dayAppointments.length - visibleAppointments.length;
+        // Se não houver compromissos, não mostrar nada
+        if (dayAppointments.length === 0) {
+            return;
+        }
         
-        // Adicionar compromissos visíveis
-        visibleAppointments.forEach(appointment => {
-            const startDate = new Date(appointment.startDate);
+        // Determinar quantos compromissos mostrar
+        const toShow = dayAppointments.slice(0, maxToShow);
+        const remaining = dayAppointments.length - maxToShow;
+        
+        // Renderizar cada compromisso
+        toShow.forEach(appointment => {
+            const appointmentEl = document.createElement('div');
+            appointmentEl.className = `mini-appointment status-${appointment.status || 'agendado'}`;
+            appointmentEl.dataset.id = appointment.id;
             
-            // Formatar hora
-            const startTimeStr = startDate.toLocaleTimeString('pt-BR', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
+            // Formatar horário
+            const startTime = new Date(appointment.startDate).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
             });
             
-            // Criar elemento do compromisso
-            const appointmentElement = document.createElement('div');
-            appointmentElement.className = `appointment-mini status-${appointment.status}`;
-            
-            // Conteúdo do compromisso
-            appointmentElement.innerHTML = `
-                <div class="appointment-time">${startTimeStr}</div>
-                <div class="appointment-title">${appointment.title}</div>
+            // Construir HTML do compromisso
+            appointmentEl.innerHTML = `
+                <span class="mini-time">${startTime}</span>
+                <span class="mini-title">${appointment.title}</span>
             `;
             
-            // Adicionar evento de clique
-            appointmentElement.addEventListener('click', (event) => {
-                event.stopPropagation();
-                onClickCallback(appointment.id);
-            });
+            // Adicionar ao container
+            container.appendChild(appointmentEl);
             
-            container.appendChild(appointmentElement);
+            // Adicionar evento de clique para mostrar detalhes
+            appointmentEl.addEventListener('click', (event) => {
+                event.stopPropagation();
+                // Disparar evento personalizado para mostrar detalhes
+                const showDetailsEvent = new CustomEvent('show-appointment-details', {
+                    detail: { appointmentId: appointment.id }
+                });
+                document.dispatchEvent(showDetailsEvent);
+            });
         });
         
-        // Adicionar indicador de "mais compromissos" se necessário
-        if (hiddenCount > 0) {
-            const moreElement = document.createElement('div');
-            moreElement.className = 'more-appointments';
-            moreElement.textContent = `+ ${hiddenCount} mais`;
+        // Se houver mais compromissos, mostrar indicador
+        if (remaining > 0) {
+            const moreEl = document.createElement('div');
+            moreEl.className = 'mini-more';
+            moreEl.textContent = `+ ${remaining} mais`;
             
-            // Adicionar evento de clique
-            moreElement.addEventListener('click', (event) => {
+            // Adicionar ao container
+            container.appendChild(moreEl);
+            
+            // Adicionar evento de clique para mostrar todos os compromissos do dia
+            moreEl.addEventListener('click', (event) => {
                 event.stopPropagation();
-                onMoreClick(date);
+                // Disparar evento personalizado para mostrar todos os compromissos do dia
+                const showDayEvent = new CustomEvent('show-day-appointments', {
+                    detail: { date: date }
+                });
+                document.dispatchEvent(showDayEvent);
             });
-            
-            container.appendChild(moreElement);
         }
     },
     
-    // Posicionar modal de detalhes
-    positionDetailsModal: function(modal) {
-        // Verificar se o modal está fora da tela
-        const rect = modal.getBoundingClientRect();
+    // Adiciona informações do cliente ao elemento de compromisso
+    addClientInfoToAppointment: function(appointment, clientElement) {
+        if (!appointment || !clientElement) return;
+        
+        // Se não tiver clientId, não fazer nada
+        if (!appointment.clientId) return;
+        
+        // Buscar cliente no banco de dados
+        DB.clients.getById(appointment.clientId)
+            .then(client => {
+                if (client) {
+                    // Atualizar elemento com informações do cliente
+                    clientElement.textContent = client.name;
+                    clientElement.title = `Cliente: ${client.name}`;
+                    
+                    // Adicionar telefone se disponível
+                    if (client.phone) {
+                        const phoneEl = document.createElement('div');
+                        phoneEl.className = 'client-phone';
+                        phoneEl.innerHTML = `<i class="fas fa-phone"></i> ${client.phone}`;
+                        clientElement.parentNode.appendChild(phoneEl);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar cliente:', error);
+            });
+    },
+    
+    // ===== FUNÇÕES DE UI =====
+    
+    // Posiciona modal de detalhes
+    positionDetailsModal: function(modal, eventElement) {
+        if (!modal || !eventElement) return;
+        
+        const rect = eventElement.getBoundingClientRect();
+        const modalContent = modal.querySelector('.modal-content');
+        
+        if (!modalContent) return;
+        
+        // Calcular posição
+        const top = rect.bottom + window.scrollY + 10; // 10px abaixo do evento
+        const left = rect.left + window.scrollX;
+        
+        // Verificar se o modal ficaria fora da tela
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
+        const modalWidth = modalContent.offsetWidth;
+        const modalHeight = modalContent.offsetHeight;
         
         // Ajustar posição horizontal se necessário
-        if (rect.right > viewportWidth) {
-            modal.style.left = `${viewportWidth - rect.width - 20}px`;
-            modal.style.transform = 'translateY(-50%)';
+        let adjustedLeft = left;
+        if (left + modalWidth > viewportWidth) {
+            adjustedLeft = viewportWidth - modalWidth - 20; // 20px de margem
         }
         
         // Ajustar posição vertical se necessário
-        if (rect.bottom > viewportHeight) {
-            modal.style.top = `${viewportHeight - rect.height - 20}px`;
-            modal.style.transform = 'translateX(-50%)';
+        let adjustedTop = top;
+        if (top + modalHeight > viewportHeight + window.scrollY) {
+            adjustedTop = rect.top + window.scrollY - modalHeight - 10; // 10px acima do evento
         }
         
-        // Ajustar ambos se necessário
-        if (rect.right > viewportWidth && rect.bottom > viewportHeight) {
-            modal.style.top = `${viewportHeight - rect.height - 20}px`;
-            modal.style.left = `${viewportWidth - rect.width - 20}px`;
-            modal.style.transform = 'none';
-        }
+        // Aplicar posição
+        modalContent.style.position = 'absolute';
+        modalContent.style.top = `${Math.max(20, adjustedTop)}px`;
+        modalContent.style.left = `${Math.max(20, adjustedLeft)}px`;
+        modalContent.style.transform = 'none';
     },
     
-    // Formatar período para exibição no cabeçalho
-    formatPeriodHeader: function(date, view) {
+    // Formata período para exibição no cabeçalho
+    formatPeriodHeader: function(startDate, endDate, view) {
+        if (!startDate || !endDate) return '';
+        
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        
+        // Formatar com base na visualização
         switch (view) {
             case 'day':
-                return date.toLocaleDateString('pt-BR', { 
-                    weekday: 'long', 
-                    day: 'numeric', 
-                    month: 'long', 
-                    year: 'numeric' 
+                return start.toLocaleDateString('pt-BR', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
                 });
+            
+            case 'week':
+                const startDay = start.toLocaleDateString('pt-BR', {
+                    day: 'numeric'
+                });
+                const startMonth = start.toLocaleDateString('pt-BR', {
+                    month: 'short'
+                });
+                const endDay = end.toLocaleDateString('pt-BR', {
+                    day: 'numeric'
+                });
+                const endMonth = end.toLocaleDateString('pt-BR', {
+                    month: 'short'
+                });
+                const year = start.getFullYear();
                 
-            case 'week': {
-                const startOfWeek = this.getStartOfWeek(date);
-                const endOfWeek = this.getEndOfWeek(date);
-                
-                // Se mesmo mês
-                if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
-                    return `${startOfWeek.getDate()} - ${endOfWeek.getDate()} de ${startOfWeek.toLocaleDateString('pt-BR', { month: 'long' })} de ${startOfWeek.getFullYear()}`;
+                // Se for o mesmo mês
+                if (start.getMonth() === end.getMonth()) {
+                    return `${startDay} a ${endDay} de ${startMonth} de ${year}`;
+                } else {
+                    return `${startDay} de ${startMonth} a ${endDay} de ${endMonth} de ${year}`;
                 }
-                
-                // Se mesmo ano
-                if (startOfWeek.getFullYear() === endOfWeek.getFullYear()) {
-                    return `${startOfWeek.getDate()} de ${startOfWeek.toLocaleDateString('pt-BR', { month: 'long' })} - ${endOfWeek.getDate()} de ${endOfWeek.toLocaleDateString('pt-BR', { month: 'long' })} de ${startOfWeek.getFullYear()}`;
-                }
-                
-                // Anos diferentes
-                return `${startOfWeek.getDate()} de ${startOfWeek.toLocaleDateString('pt-BR', { month: 'long' })} de ${startOfWeek.getFullYear()} - ${endOfWeek.getDate()} de ${endOfWeek.toLocaleDateString('pt-BR', { month: 'long' })} de ${endOfWeek.getFullYear()}`;
-            }
-                
+            
             case 'month':
-                return date.toLocaleDateString('pt-BR', { 
-                    month: 'long', 
-                    year: 'numeric' 
+                return start.toLocaleDateString('pt-BR', {
+                    month: 'long',
+                    year: 'numeric'
                 });
-                
+            
             default:
-                return '';
+                return `${start.toLocaleDateString('pt-BR')} - ${end.toLocaleDateString('pt-BR')}`;
         }
     },
     
-    // Validar formulário de compromisso
+    // ===== FUNÇÕES DE VALIDAÇÃO E VERIFICAÇÃO =====
+    
+    // Valida formulário de compromisso
     validateAppointmentForm: function(formData) {
         const errors = [];
         
         // Validar título
         if (!formData.title || formData.title.trim() === '') {
-            errors.push('O título do compromisso é obrigatório.');
+            errors.push('O título é obrigatório');
         }
         
-        // Validar data e horários
-        if (!formData.date) {
-            errors.push('A data do compromisso é obrigatória.');
+        // Validar datas
+        if (!formData.startDate) {
+            errors.push('A data de início é obrigatória');
         }
         
         if (!formData.startTime) {
-            errors.push('O horário de início é obrigatório.');
+            errors.push('A hora de início é obrigatória');
         }
         
         if (!formData.endTime) {
-            errors.push('O horário de término é obrigatório.');
+            errors.push('A hora de término é obrigatória');
         }
         
-        // Validar se o horário de término é posterior ao de início
-        if (formData.date && formData.startTime && formData.endTime) {
-            const startDateTime = new Date(`${formData.date}T${formData.startTime}`);
-            const endDateTime = new Date(`${formData.date}T${formData.endTime}`);
+        // Verificar se a hora de término é posterior à hora de início
+        if (formData.startDate && formData.startTime && formData.endTime) {
+            const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`);
+            const endDateTime = new Date(`${formData.startDate}T${formData.endTime}`);
             
             if (endDateTime <= startDateTime) {
-                errors.push('O horário de término deve ser posterior ao horário de início.');
+                errors.push('A hora de término deve ser posterior à hora de início');
             }
-        }
-        
-        // Validar preço (se informado)
-        if (formData.price && isNaN(parseFloat(formData.price.replace(',', '.')))) {
-            errors.push('O preço informado é inválido.');
         }
         
         return {
@@ -330,30 +416,25 @@ const AgendaUtils = {
         };
     },
     
-    // Verificar sobreposição de compromissos
-    checkAppointmentOverlap: function(appointments, newAppointment, excludeId = null) {
+    // Verifica sobreposição de compromissos
+    checkAppointmentOverlap: function(appointments, newAppointment) {
+        // Ignorar o próprio compromisso ao verificar sobreposições (para edição)
+        const otherAppointments = appointments.filter(a => 
+            a.id !== newAppointment.id
+        );
+        
+        // Converter datas para objetos Date
         const newStart = new Date(newAppointment.startDate);
         const newEnd = new Date(newAppointment.endDate);
         
-        // Filtrar compromissos do mesmo dia
-        const sameDayAppointments = appointments.filter(appointment => {
-            // Ignorar o próprio compromisso em caso de edição
-            if (excludeId && appointment.id === excludeId) {
-                return false;
-            }
-            
-            const appointmentDate = new Date(appointment.startDate);
-            return this.isSameDay(appointmentDate, newStart);
-        });
-        
-        // Verificar sobreposição
-        const overlappingAppointments = sameDayAppointments.filter(appointment => {
-            const start = new Date(appointment.startDate);
-            const end = new Date(appointment.endDate);
+        // Verificar sobreposição com cada compromisso existente
+        const overlappingAppointments = otherAppointments.filter(appointment => {
+            const existingStart = new Date(appointment.startDate);
+            const existingEnd = new Date(appointment.endDate);
             
             // Verificar se há sobreposição
-            // (newStart < end) && (newEnd > start)
-            return newStart < end && newEnd > start;
+            // (newStart < existingEnd) && (newEnd > existingStart)
+            return newStart < existingEnd && newEnd > existingStart;
         });
         
         return {
@@ -362,104 +443,140 @@ const AgendaUtils = {
         };
     },
     
-    // Calcular duração entre duas datas em minutos
+    // ===== FUNÇÕES DE CÁLCULO E FORMATAÇÃO =====
+    
+    // Calcula duração entre duas datas em minutos
     calculateDurationInMinutes: function(startDate, endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+        if (!startDate || !endDate) return 0;
         
-        const diffMs = end - start;
-        return Math.floor(diffMs / (1000 * 60));
+        // Converter para objetos Date se forem strings
+        if (typeof startDate === 'string') startDate = new Date(startDate);
+        if (typeof endDate === 'string') endDate = new Date(endDate);
+        
+        // Calcular diferença em milissegundos
+        const diffMs = endDate - startDate;
+        
+        // Converter para minutos
+        return Math.round(diffMs / 60000);
     },
     
-    // Formatar duração em horas e minutos
+    // Formata duração em horas e minutos
     formatDuration: function(minutes) {
+        if (!minutes || minutes <= 0) return 'Não definida';
+        
         const hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
         
         if (hours === 0) {
-            return `${mins} minutos`;
-        } else if (hours === 1) {
-            if (mins === 0) {
-                return '1 hora';
-            } else {
-                return `1 hora e ${mins} minutos`;
-            }
+            return `${mins} minuto${mins !== 1 ? 's' : ''}`;
+        } else if (mins === 0) {
+            return `${hours} hora${hours !== 1 ? 's' : ''}`;
         } else {
-            if (mins === 0) {
-                return `${hours} horas`;
-            } else {
-                return `${hours} horas e ${mins} minutos`;
-            }
+            return `${hours} hora${hours !== 1 ? 's' : ''} e ${mins} minuto${mins !== 1 ? 's' : ''}`;
         }
     },
     
-    // Gerar cores para categorias de serviços
+    // Gera cores para categorias
     generateCategoryColors: function(categories) {
         const colors = {};
-        const baseHues = [0, 60, 120, 180, 240, 300]; // Vermelho, amarelo, verde, ciano, azul, magenta
         
+        // Cores predefinidas para categorias comuns
+        const predefinedColors = {
+            'Manicure': '#FF9AA2',
+            'Pedicure': '#FFB7B2',
+            'Alongamento': '#FFDAC1',
+            'Esmaltação': '#E2F0CB',
+            'Decoração': '#B5EAD7',
+            'Tratamento': '#C7CEEA'
+        };
+        
+        // Cores para gerar aleatoriamente
+        const baseColors = [
+            '#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', 
+            '#B5EAD7', '#C7CEEA', '#F2A2E8', '#BDB2FF',
+            '#A2D2FF', '#FDFFB6', '#CAFFBF', '#9BF6FF'
+        ];
+        
+        // Atribuir cores às categorias
         categories.forEach((category, index) => {
-            // Usar hue rotativo para categorias
-            const hue = baseHues[index % baseHues.length];
-            // Variar a saturação e luminosidade para categorias com mesmo hue
-            const saturation = 70 + (Math.floor(index / baseHues.length) * 10);
-            const lightness = 50 - (Math.floor(index / baseHues.length) * 5);
-            
-            colors[category] = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            if (predefinedColors[category]) {
+                // Usar cor predefinida se disponível
+                colors[category] = predefinedColors[category];
+            } else {
+                // Usar cor da lista ou gerar aleatoriamente
+                const colorIndex = index % baseColors.length;
+                colors[category] = baseColors[colorIndex];
+            }
         });
         
         return colors;
     },
     
-    // Calcular faturamento por período
+    // Calcula faturamento por período
     calculateRevenue: function(appointments, startDate, endDate) {
+        if (!appointments || !Array.isArray(appointments)) return 0;
+        
+        // Converter datas para objetos Date
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+        
         // Filtrar compromissos no período e com status concluído
         const filteredAppointments = appointments.filter(appointment => {
             const appointmentDate = new Date(appointment.startDate);
-            return appointmentDate >= startDate && 
-                   appointmentDate <= endDate && 
-                   appointment.status === 'concluido';
+            
+            // Verificar se está no período
+            const isInPeriod = (!start || appointmentDate >= start) && 
+                              (!end || appointmentDate <= end);
+            
+            // Verificar se está concluído
+            const isCompleted = appointment.status === 'concluido';
+            
+            return isInPeriod && isCompleted;
         });
         
-        // Somar preços
-        const total = filteredAppointments.reduce((sum, appointment) => {
-            return sum + (appointment.price || 0);
+        // Somar valores
+        return filteredAppointments.reduce((total, appointment) => {
+            // Verificar se tem preço
+            if (appointment.price && !isNaN(appointment.price)) {
+                return total + parseFloat(appointment.price);
+            }
+            return total;
         }, 0);
-        
-        return {
-            total: total,
-            count: filteredAppointments.length,
-            appointments: filteredAppointments
-        };
     },
     
-    // Agrupar compromissos por dia
+    // Agrupa compromissos por dia
     groupAppointmentsByDay: function(appointments) {
+        if (!appointments || !Array.isArray(appointments)) return {};
+        
         const grouped = {};
         
         appointments.forEach(appointment => {
             const date = new Date(appointment.startDate);
-            const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+            const dateKey = this.formatDateForInput(date);
             
-            if (!grouped[dateStr]) {
-                grouped[dateStr] = [];
+            if (!grouped[dateKey]) {
+                grouped[dateKey] = [];
             }
             
-            grouped[dateStr].push(appointment);
+            grouped[dateKey].push(appointment);
         });
         
-        // Ordenar compromissos em cada dia
-        for (const dateStr in grouped) {
-            grouped[dateStr].sort((a, b) => {
-                return new Date(a.startDate) - new Date(b.startDate);
-            });
+        // Ordenar compromissos em cada dia por hora de início
+        for (const dateKey in grouped) {
+            grouped[dateKey].sort((a, b) => 
+                new Date(a.startDate) - new Date(b.startDate)
+            );
         }
         
         return grouped;
     },
     
-    // Verificar se um compromisso está em andamento
+    // ===== FUNÇÕES DE VERIFICAÇÃO DE STATUS =====
+    
+    // Verifica se um compromisso está em andamento
     isAppointmentInProgress: function(appointment) {
+        if (!appointment) return false;
+        
         const now = new Date();
         const start = new Date(appointment.startDate);
         const end = new Date(appointment.endDate);
@@ -467,21 +584,129 @@ const AgendaUtils = {
         return now >= start && now <= end;
     },
     
-    // Verificar se um compromisso está próximo de começar
+    // Verifica se um compromisso está próximo de começar
     isAppointmentUpcoming: function(appointment, minutesThreshold = 30) {
+        if (!appointment) return false;
+        
         const now = new Date();
         const start = new Date(appointment.startDate);
         
-        // Verificar se o compromisso ainda não começou
-        if (start > now) {
-            // Calcular diferença em minutos
-            const diffMs = start - now;
-            const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        // Se já começou, não é próximo
+        if (now >= start) return false;
+        
+        // Calcular diferença em minutos
+        const diffMs = start - now;
+        const diffMinutes = Math.round(diffMs / 60000);
+        
+        return diffMinutes <= minutesThreshold;
+    },
+    
+    // ===== FUNÇÕES ESPECÍFICAS PARA FULLCALENDAR =====
+    
+    // Converte compromissos para o formato do FullCalendar
+    convertAppointmentsToEvents: function(appointments) {
+        if (!appointments || !Array.isArray(appointments)) return [];
+        
+        return appointments.map(appointment => {
+            // Determinar cor com base no status
+            let backgroundColor, borderColor, textColor;
             
-            // Verificar se está dentro do limite de tempo
-            return diffMinutes <= minutesThreshold;
+            switch (appointment.status) {
+                case 'concluido':
+                    backgroundColor = '#4CAF50'; // Verde
+                    borderColor = '#388E3C';
+                    textColor = '#FFFFFF';
+                    break;
+                case 'cancelado':
+                    backgroundColor = '#F44336'; // Vermelho
+                    borderColor = '#D32F2F';
+                    textColor = '#FFFFFF';
+                    break;
+                default:
+                    backgroundColor = '#2196F3'; // Azul (padrão)
+                    borderColor = '#1976D2';
+                    textColor = '#FFFFFF';
+            }
+            
+            // Criar evento para o FullCalendar
+            return {
+                id: appointment.id.toString(),
+                title: appointment.title,
+                start: appointment.startDate,
+                end: appointment.endDate,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                textColor: textColor,
+                extendedProps: {
+                    clientId: appointment.clientId,
+                    clientName: appointment.clientName,
+                    serviceId: appointment.serviceId,
+                    serviceName: appointment.serviceName,
+                    price: appointment.price,
+                    location: appointment.location,
+                    notes: appointment.notes,
+                    status: appointment.status || 'agendado'
+                }
+            };
+        });
+    },
+    
+    // Cria conteúdo HTML para tooltip de evento
+    createEventTooltip: function(event) {
+        let content = `<div class="event-tooltip-title">${event.title}</div>`;
+        
+        // Adicionar horário
+        if (event.start && event.end) {
+            const startTime = event.start.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const endTime = event.end.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            content += `<div class="event-tooltip-time">${startTime} - ${endTime}</div>`;
         }
         
-        return false;
+        // Adicionar informações extras
+        const props = event.extendedProps || {};
+        
+        if (props.clientName) {
+            content += `<div class="event-tooltip-client"><i class="fas fa-user"></i> ${props.clientName}</div>`;
+        }
+        
+        if (props.serviceName) {
+            content += `<div class="event-tooltip-service"><i class="fas fa-tag"></i> ${props.serviceName}</div>`;
+        }
+        
+        if (props.price) {
+            const formattedPrice = typeof props.price === 'number' 
+                ? `R$ ${props.price.toFixed(2).replace('.', ',')}`
+                : props.price;
+            content += `<div class="event-tooltip-price"><i class="fas fa-dollar-sign"></i> ${formattedPrice}</div>`;
+        }
+        
+        if (props.location) {
+            const locationText = props.location === 'salao' ? 'Salão' : 'Domicílio';
+            content += `<div class="event-tooltip-location"><i class="fas fa-map-marker-alt"></i> ${locationText}</div>`;
+        }
+        
+        if (props.status) {
+            let statusText, statusIcon;
+            switch (props.status) {
+                case 'agendado':
+                    statusText = 'Agendado';
+                    statusIcon = 'calendar-check';
+                    break;
+                case 'concluido':
+                    statusText = 'Concluído';
+                    statusIcon = 'check-circle';
+                    break;
+                case 'cancelado':
+                    statusText = 'Cancelado';
+                    statusIcon = 'times-circle';
+                    break;
+                default:
+                    statusText = props.status;
+                    statusIcon = 'info-circle';
+            }
+            content += `<div class="event-tooltip-status"><i class="fas fa-${statusIcon}"></i> ${statusText}</div>`;
+        }
+        
+        return content;
     }
 };
