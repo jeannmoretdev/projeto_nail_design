@@ -2,6 +2,16 @@
 @import 'services.css';
 @import 'categories.css';
 @import 'agenda.css';
+@import 'import-dialog.css';
+@import 'components/buttons.css';
+@import 'components/cards.css';
+@import 'components/forms.css';
+@import 'components/layout.css';
+@import 'components/modals.css';
+@import 'components/notifications.css';
+@import 'components/settings.css';
+
+
 
 :root {
     /* Cores base */

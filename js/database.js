@@ -446,32 +446,21 @@ const DB = {
         getByDateRange: function(startDate, endDate) {
             return new Promise((resolve, reject) => {
                 try {
-                    // Converter para timestamps para comparação
-                    const startTimestamp = startDate.getTime();
-                    const endTimestamp = endDate.getTime();
+                    // Converter para strings ISO para comparação consistente
+                    const startDateStr = startDate.toISOString();
+                    const endDateStr = endDate.toISOString();
                     
-                    const transaction = DB.db.transaction(['appointments'], 'readonly');
-                    const store = transaction.objectStore('appointments');
-                    const request = store.getAll();
-                    
-                    request.onsuccess = () => {
-                        const appointments = request.result;
-                        
-                        // Filtrar compromissos dentro do intervalo de datas
-                        const filteredAppointments = appointments.filter(appointment => {
-                            const appointmentStartDate = new Date(appointment.startDate);
-                            const appointmentStartTimestamp = appointmentStartDate.getTime();
+                    this.getAll()
+                        .then(appointments => {
+                            // Filtrar compromissos que estão no intervalo de datas
+                            const filteredAppointments = appointments.filter(appointment => {
+                                return appointment.startDate <= endDateStr && 
+                                       appointment.endDate >= startDateStr;
+                            });
                             
-                            return appointmentStartTimestamp >= startTimestamp && 
-                                   appointmentStartTimestamp <= endTimestamp;
-                        });
-                        
-                        resolve(filteredAppointments);
-                    };
-                    
-                    request.onerror = (event) => {
-                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
-                    };
+                            resolve(filteredAppointments);
+                        })
+                        .catch(reject);
                 } catch (error) {
                     reject(error);
                 }
@@ -482,24 +471,15 @@ const DB = {
         getByClient: function(clientId) {
             return new Promise((resolve, reject) => {
                 try {
-                    const transaction = DB.db.transaction(['appointments'], 'readonly');
-                    const store = transaction.objectStore('appointments');
-                    const request = store.getAll();
-                    
-                    request.onsuccess = () => {
-                        const appointments = request.result;
-                        
-                        // Filtrar compromissos do cliente
-                        const clientAppointments = appointments.filter(appointment => 
-                            appointment.clientId === clientId
-                        );
-                        
-                        resolve(clientAppointments);
-                    };
-                    
-                    request.onerror = (event) => {
-                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
-                    };
+                    this.getAll()
+                        .then(appointments => {
+                            const filteredAppointments = appointments.filter(appointment => {
+                                return appointment.clientId === clientId;
+                            });
+                            
+                            resolve(filteredAppointments);
+                        })
+                        .catch(reject);
                 } catch (error) {
                     reject(error);
                 }
@@ -510,24 +490,34 @@ const DB = {
         getByService: function(serviceId) {
             return new Promise((resolve, reject) => {
                 try {
-                    const transaction = DB.db.transaction(['appointments'], 'readonly');
-                    const store = transaction.objectStore('appointments');
-                    const request = store.getAll();
-                    
-                    request.onsuccess = () => {
-                        const appointments = request.result;
-                        
-                        // Filtrar compromissos do serviço
-                        const serviceAppointments = appointments.filter(appointment => 
-                            appointment.serviceId === serviceId
-                        );
-                        
-                        resolve(serviceAppointments);
-                    };
-                    
-                    request.onerror = (event) => {
-                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
-                    };
+                    this.getAll()
+                        .then(appointments => {
+                            const filteredAppointments = appointments.filter(appointment => {
+                                return appointment.serviceId === serviceId;
+                            });
+                            
+                            resolve(filteredAppointments);
+                        })
+                        .catch(reject);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Obter compromissos por status
+        getByStatus: function(status) {
+            return new Promise((resolve, reject) => {
+                try {
+                    this.getAll()
+                        .then(appointments => {
+                            const filteredAppointments = appointments.filter(appointment => {
+                                return appointment.status === status;
+                            });
+                            
+                            resolve(filteredAppointments);
+                        })
+                        .catch(reject);
                 } catch (error) {
                     reject(error);
                 }

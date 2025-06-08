@@ -1,4 +1,4 @@
-// Template para a página de agenda
+// Template para a página de agenda usando FullCalendar
 const agendaTemplate = `
 <div class="page-header">
     <h2>Agenda</h2>
@@ -7,34 +7,7 @@ const agendaTemplate = `
     </button>
 </div>
 
-<div class="agenda-controls">
-    <div class="period-navigation">
-        <button id="prev-period-btn" class="nav-btn">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <h3 id="current-period" class="current-period">Julho 2023</h3>
-        <button id="next-period-btn" class="nav-btn">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-        <button id="today-btn" class="today-btn">Hoje</button>
-        
-        <div class="date-filter">
-            <label for="date-filter-input">Ir para:</label>
-            <input type="date" id="date-filter-input">
-            <button id="date-filter-btn" class="date-filter-btn">Ir</button>
-        </div>
-    </div>
-    
-    <div class="view-controls">
-        <button id="day-view-btn" class="view-btn">Dia</button>
-        <button id="week-view-btn" class="view-btn active">Semana</button>
-        <button id="month-view-btn" class="view-btn">Mês</button>
-    </div>
-</div>
-
-<div id="agenda-container" class="agenda-container">
-    <!-- O conteúdo da agenda será renderizado dinamicamente -->
-</div>
+<div id="calendar" class="nail-design-calendar"></div>
 
 <!-- Modal para adicionar/editar compromisso -->
 <div id="appointment-modal" class="modal">
@@ -57,62 +30,68 @@ const agendaTemplate = `
                 </div>
                 
                 <div class="form-group">
-                    <label for="appointment-start-time">Horário Inicial</label>
+                    <label for="appointment-start-time">Horário de início</label>
                     <input type="time" id="appointment-start-time" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="appointment-end-time">Horário Final</label>
+                    <label for="appointment-end-time">Horário de término</label>
                     <input type="time" id="appointment-end-time" required>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="appointment-client">Cliente</label>
-                <select id="appointment-client">
-                    <option value="">Selecione um cliente</option>
-                    <!-- Clientes serão carregados dinamicamente -->
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="appointment-service">Serviço</label>
-                <select id="appointment-service">
-                    <option value="">Selecione um serviço</option>
-                    <!-- Serviços serão carregados dinamicamente -->
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="appointment-price">Preço (R$)</label>
-                <input type="text" id="appointment-price" inputmode="decimal">
-            </div>
-            
-            <div class="form-group">
-                <label>Local</label>
-                <div class="radio-group">
-                    <label class="radio-label">
-                        <input type="radio" name="appointment-location" value="salao" checked>
-                        Salão
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="appointment-location" value="cliente">
-                        Casa do Cliente
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="appointment-location" value="outro">
-                        Outro
-                    </label>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointment-client">Cliente</label>
+                    <div class="select-container">
+                        <select id="appointment-client">
+                            <option value="">Selecione um cliente</option>
+                            <!-- Opções serão carregadas dinamicamente -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointment-service">Serviço</label>
+                    <div class="select-container">
+                        <select id="appointment-service">
+                            <option value="">Selecione um serviço</option>
+                            <!-- Opções serão carregadas dinamicamente -->
+                        </select>
+                    </div>
                 </div>
             </div>
             
-            <div class="form-group">
-                <label for="appointment-status">Status</label>
-                <select id="appointment-status">
-                    <option value="agendado" selected>Agendado</option>
-                    <option value="concluido">Concluído</option>
-                    <option value="cancelado">Cancelado</option>
-                </select>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="appointment-price">Preço</label>
+                    <div class="price-input">
+                        <input type="text" id="appointment-price" placeholder="0,00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Local</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="appointment-location" value="salao" checked>
+                            Salão
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="appointment-location" value="domicilio">
+                            Domicílio
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointment-status">Status</label>
+                    <select id="appointment-status" class="status-select">
+                        <option value="agendado">Agendado</option>
+                        <option value="concluido">Concluído</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
             </div>
             
             <div class="form-group">
