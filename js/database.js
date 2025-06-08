@@ -5,7 +5,7 @@ const DB = {
     // Inicializar banco de dados
     init: function() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open('nailDesignerDB', 1);
+            const request = indexedDB.open('NailDesignDB', 2); // Incrementar a versão
             
             request.onerror = (event) => {
                 console.error('Erro ao abrir banco de dados:', event.target.error);
@@ -15,23 +15,24 @@ const DB = {
             request.onsuccess = (event) => {
                 this.db = event.target.result;
                 console.log('Banco de dados aberto com sucesso');
-                resolve(true);
+                resolve();
             };
             
             request.onupgradeneeded = (event) => {
                 const db = event.target.result;
                 
-                // Criar tabela de clientes se não existir
+                // Criar ou verificar o object store de clientes
                 if (!db.objectStoreNames.contains('clients')) {
                     const clientsStore = db.createObjectStore('clients', { keyPath: 'id', autoIncrement: true });
-                    
-                    // Criar índices para busca
                     clientsStore.createIndex('name', 'name', { unique: false });
-                    clientsStore.createIndex('phone', 'phone', { unique: false });
-                    clientsStore.createIndex('birthday', 'birthday', { unique: false });
                 }
                 
-                console.log('Banco de dados criado/atualizado com sucesso');
+                // Criar ou verificar o object store de serviços
+                if (!db.objectStoreNames.contains('services')) {
+                    const servicesStore = db.createObjectStore('services', { keyPath: 'id', autoIncrement: true });
+                    servicesStore.createIndex('name', 'name', { unique: false });
+                    servicesStore.createIndex('category', 'category', { unique: false });
+                }
             };
         });
     },
@@ -197,6 +198,126 @@ const DB = {
                     
                     request.onerror = (event) => {
                         reject(new Error('Erro ao limpar clientes: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+    },
+    
+    // Adicionar objeto para gerenciar serviços
+    services: {
+        add: function(service) {
+            return new Promise((resolve, reject) => {
+                const transaction = DB.db.transaction(['services'], 'readwrite');
+                const store = transaction.objectStore('services');
+                const request = store.add(service);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        },
+        
+        update: function(service) {
+            return new Promise((resolve, reject) => {
+                const transaction = DB.db.transaction(['services'], 'readwrite');
+                const store = transaction.objectStore('services');
+                const request = store.put(service);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        },
+        
+        delete: function(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = DB.db.transaction(['services'], 'readwrite');
+                const store = transaction.objectStore('services');
+                const request = store.delete(id);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        },
+        
+        getById: function(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = DB.db.transaction(['services'], 'readonly');
+                const store = transaction.objectStore('services');
+                const request = store.get(id);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        },
+        
+        getAll: function() {
+            return new Promise((resolve, reject) => {
+                const transaction = DB.db.transaction(['services'], 'readonly');
+                const store = transaction.objectStore('services');
+                const request = store.getAll();
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        },
+        
+        search: function(query) {
+            return new Promise((resolve, reject) => {
+                const transaction = DB.db.transaction(['services'], 'readonly');
+                const store = transaction.objectStore('services');
+                const request = store.getAll();
+                
+                request.onsuccess = () => {
+                    const services = request.result;
+                    if (!query) {
+                        resolve(services);
+                        return;
+                    }
+                    
+                    const lowerQuery = query.toLowerCase();
+                    const filtered = services.filter(service => {
+                        return (
+                            service.name.toLowerCase().includes(lowerQuery) ||
+                            (service.category && service.category.toLowerCase().includes(lowerQuery)) ||
+                            (service.description && service.description.toLowerCase().includes(lowerQuery))
+                        );
+                    });
+                    
+                    resolve(filtered);
+                };
+                
+                request.onerror = () => reject(request.error);
+            });
+        },
+        
+        getByCategory: function(category) {
+            return new Promise((resolve, reject) => {
+                const transaction = DB.db.transaction(['services'], 'readonly');
+                const store = transaction.objectStore('services');
+                const index = store.index('category');
+                const request = index.getAll(category);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        },
+        
+        // Adicionar função clear
+        clear: function() {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['services'], 'readwrite');
+                    const store = transaction.objectStore('services');
+                    const request = store.clear();
+                    
+                    request.onsuccess = () => {
+                        resolve(true);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao limpar serviços: ' + event.target.error));
                     };
                 } catch (error) {
                     reject(error);

@@ -1,150 +1,96 @@
 // Componente de Configurações
 const SettingsComponent = {
-    // Elementos DOM
-    elements: {
-        themeSelector: null,
-        fontSizeSelector: null,
-        exportDataBtn: null,
-        importFileInput: null,
-        importStatus: null,
-        clearDataBtn: null
-    },
-    
     // Inicializar componente
     init: async function() {
         try {
             // Carregar o template
+            // Alterando de 'content' para 'settings' que é o ID correto da seção
             await SettingsTemplate.loadTemplate('settings', 'settings');
-            
-            // Inicializar elementos DOM após carregar o template
-            this.initElements();
             
             // Configurar eventos
             this.setupEventListeners();
             
-            // Carregar configurações salvas
-            this.loadSavedSettings();
+            // Aplicar configurações salvas
+            this.applyStoredSettings();
             
             return true;
         } catch (error) {
             console.error('Erro ao inicializar componente de configurações:', error);
-            const settingsElement = document.getElementById('settings');
-            if (settingsElement) {
-                settingsElement.innerHTML = `
-                    <div class="error-message">
-                        <p>Erro ao carregar o componente de configurações.</p>
-                        <p>Detalhes: ${error.message}</p>
-                    </div>
-                `;
-            }
             return false;
         }
     },
     
-    // Inicializar referências aos elementos DOM
-    initElements: function() {
-        this.elements = {
-            themeSelector: document.getElementById('theme-selector'),
-            fontSizeSelector: document.getElementById('font-size'),
-            exportDataBtn: document.getElementById('export-data'),
-            importFileInput: document.getElementById('import-file'),
-            importStatus: document.getElementById('import-status'),
-            clearDataBtn: document.getElementById('clear-data')
-        };
-    },
-    
     // Configurar listeners de eventos
     setupEventListeners: function() {
-        // Mudar tema
-        if (this.elements.themeSelector) {
-            this.elements.themeSelector.addEventListener('change', () => {
-                const theme = this.elements.themeSelector.value;
-                this.setTheme(theme);
-                this.saveSettings();
+        // Tema
+        const themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) {
+            themeSelector.addEventListener('change', () => {
+                this.changeTheme(themeSelector.value);
             });
+            
+            // Definir valor inicial
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            themeSelector.value = currentTheme;
         }
         
-        // Mudar tamanho da fonte
-        if (this.elements.fontSizeSelector) {
-            this.elements.fontSizeSelector.addEventListener('change', () => {
-                const fontSize = this.elements.fontSizeSelector.value;
-                this.setFontSize(fontSize);
-                this.saveSettings();
+        // Tamanho da fonte
+        const fontSizeSelector = document.getElementById('font-size');
+        if (fontSizeSelector) {
+            fontSizeSelector.addEventListener('change', () => {
+                this.changeFontSize(fontSizeSelector.value);
             });
+            
+            // Definir valor inicial
+            const currentFontSize = localStorage.getItem('fontSize') || 'medium';
+            fontSizeSelector.value = currentFontSize;
         }
         
         // Exportar dados
-        if (this.elements.exportDataBtn) {
-            this.elements.exportDataBtn.addEventListener('click', () => {
+        const exportDataBtn = document.getElementById('export-data');
+        if (exportDataBtn) {
+            exportDataBtn.addEventListener('click', () => {
                 this.exportData();
             });
         }
         
         // Importar dados
-        if (this.elements.importFileInput) {
-            this.elements.importFileInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    this.importData(file);
-                }
+        const importFileInput = document.getElementById('import-file');
+        if (importFileInput) {
+            importFileInput.addEventListener('change', (event) => {
+                this.importData(event.target.files[0]);
             });
         }
         
         // Limpar dados
-        if (this.elements.clearDataBtn) {
-            this.elements.clearDataBtn.addEventListener('click', () => {
+        const clearDataBtn = document.getElementById('clear-data');
+        if (clearDataBtn) {
+            clearDataBtn.addEventListener('click', () => {
                 this.clearAllData();
             });
         }
     },
     
-    // Carregar configurações salvas
-    loadSavedSettings: function() {
-        const settings = localStorage.getItem('appSettings');
+    // Aplicar configurações salvas
+    applyStoredSettings: function() {
+        // Aplicar tema
+        const theme = localStorage.getItem('theme') || 'light';
+        this.changeTheme(theme);
         
-        if (settings) {
-            try {
-                const parsedSettings = JSON.parse(settings);
-                
-                // Aplicar tema
-                if (parsedSettings.theme && this.elements.themeSelector) {
-                    this.elements.themeSelector.value = parsedSettings.theme;
-                    this.setTheme(parsedSettings.theme);
-                }
-                
-                // Aplicar tamanho da fonte
-                if (parsedSettings.fontSize && this.elements.fontSizeSelector) {
-                    this.elements.fontSizeSelector.value = parsedSettings.fontSize;
-                    this.setFontSize(parsedSettings.fontSize);
-                }
-            } catch (error) {
-                console.error('Erro ao carregar configurações:', error);
-            }
-        }
+        // Aplicar tamanho da fonte
+        const fontSize = localStorage.getItem('fontSize') || 'medium';
+        this.changeFontSize(fontSize);
     },
     
-    // Salvar configurações
-    saveSettings: function() {
-        try {
-            const settings = {
-                theme: this.elements.themeSelector ? this.elements.themeSelector.value : 'light',
-                fontSize: this.elements.fontSizeSelector ? this.elements.fontSizeSelector.value : 'medium'
-            };
-            
-            localStorage.setItem('appSettings', JSON.stringify(settings));
-        } catch (error) {
-            console.error('Erro ao salvar configurações:', error);
-        }
-    },
-    
-    // Definir tema
-    setTheme: function(theme) {
+    // Mudar tema
+    changeTheme: function(theme) {
         document.body.className = '';
         document.body.classList.add(`theme-${theme}`);
+        localStorage.setItem('theme', theme);
     },
     
-    // Definir tamanho da fonte
-    setFontSize: function(size) {
+    // Mudar tamanho da fonte
+    changeFontSize: function(size) {
         const rootElement = document.documentElement;
         
         switch (size) {
@@ -157,23 +103,27 @@ const SettingsComponent = {
             case 'large':
                 rootElement.style.setProperty('--base-font-size', '18px');
                 break;
-            default:
-                rootElement.style.setProperty('--base-font-size', '16px');
         }
+        
+        localStorage.setItem('fontSize', size);
     },
     
     // Exportar dados
     exportData: async function() {
         try {
-            // Obter todos os dados do banco de dados
-            const clients = await DB.clients.getAll();
+            // Obter todos os dados
+            const [clients, services] = await Promise.all([
+                DB.clients.getAll(),
+                DB.services.getAll()
+            ]);
             
-            // Criar objeto com todos os dados
+            // Criar objeto de exportação
             const exportData = {
                 version: '1.0',
                 timestamp: new Date().toISOString(),
                 data: {
-                    clients: clients
+                    clients: clients,
+                    services: services
                 }
             };
             
@@ -184,10 +134,9 @@ const SettingsComponent = {
             const blob = new Blob([jsonData], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             
-            // Criar elemento de link para download
             const a = document.createElement('a');
             a.href = url;
-            a.download = `nail_designer_backup_${this.formatDate(new Date())}.json`;
+            a.download = `nail_design_backup_${new Date().toISOString().split('T')[0]}.json`;
             document.body.appendChild(a);
             a.click();
             
@@ -195,198 +144,199 @@ const SettingsComponent = {
             setTimeout(() => {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-            }, 0);
+            }, 100);
             
             // Mostrar mensagem de sucesso
-            this.showStatus('Dados exportados com sucesso!', 'success');
+            this.showStatusMessage('success', 'Dados exportados com sucesso!');
         } catch (error) {
             console.error('Erro ao exportar dados:', error);
-            this.showStatus('Erro ao exportar dados: ' + error.message, 'error');
+            this.showStatusMessage('error', 'Erro ao exportar dados. Tente novamente.');
         }
     },
     
     // Importar dados
     importData: function(file) {
+        if (!file) {
+            this.showStatusMessage('error', 'Nenhum arquivo selecionado.');
+            return;
+        }
+        
         const reader = new FileReader();
         
         reader.onload = async (event) => {
             try {
-                const jsonData = JSON.parse(event.target.result);
+                const importData = JSON.parse(event.target.result);
                 
-                // Verificar se o arquivo tem o formato esperado
-                if (!jsonData.version || !jsonData.data) {
-                    throw new Error('Formato de arquivo inválido');
+                // Validar estrutura do arquivo
+                if (!importData.data || (!importData.data.clients && !importData.data.services)) {
+                    throw new Error('Formato de arquivo inválido.');
                 }
                 
-                // Criar um modal de confirmação personalizado
-                const confirmDialog = document.createElement('div');
-                confirmDialog.className = 'import-confirm-dialog';
-                confirmDialog.innerHTML = `
-                    <div class="import-dialog-content">
-                        <h3>Importar Dados</h3>
-                        <p>Como você deseja importar os dados?</p>
-                        
-                        <div class="import-options">
-                            <button id="btn-add" class="btn btn-primary">
-                                <i class="fas fa-plus-circle"></i> ADICIONAR aos dados existentes
-                            </button>
-                            
-                            <button id="btn-replace" class="import-btn-danger">
-                                <i class="fas fa-exclamation-triangle"></i> SUBSTITUIR TUDO (apaga dados existentes)
-                            </button>
-                            
-                            <button id="btn-cancel" class="btn btn-secondary">
-                                <i class="fas fa-times"></i> Cancelar importação
-                            </button>
-                        </div>
-                    </div>
-                `;
+                // Verificar se já existem dados e pedir confirmação
+                const [existingClients, existingServices] = await Promise.all([
+                    DB.clients.getAll(),
+                    DB.services.getAll()
+                ]);
                 
-                document.body.appendChild(confirmDialog);
+                let hasExistingData = false;
+                let confirmMessage = 'Esta ação irá substituir ';
                 
-                // Processar a escolha do usuário
-                return new Promise((resolve) => {
-                    document.getElementById('btn-add').addEventListener('click', async () => {
-                        // Adicionar aos dados existentes
-                        await this.processImport(jsonData, false);
-                        confirmDialog.remove();
-                        resolve();
-                    });
-                    
-                    document.getElementById('btn-replace').addEventListener('click', async () => {
-                        // Substituir todos os dados
-                        if (confirm('ATENÇÃO: Todos os dados existentes serão apagados. Esta ação não pode ser desfeita. Deseja continuar?')) {
-                            await this.processImport(jsonData, true);
-                            confirmDialog.remove();
-                            resolve();
+                if (existingClients.length > 0 && importData.data.clients) {
+                    hasExistingData = true;
+                    confirmMessage += `${existingClients.length} cliente(s) existente(s)`;
+                }
+                
+                if (existingServices.length > 0 && importData.data.services) {
+                    hasExistingData = true;
+                    if (existingClients.length > 0) {
+                        confirmMessage += ` e ${existingServices.length} serviço(s) existente(s)`;
+                    } else {
+                        confirmMessage += `${existingServices.length} serviço(s) existente(s)`;
+                    }
+                }
+                
+                confirmMessage += '. Esta ação não pode ser desfeita. Deseja continuar?';
+                
+                // Se já existem dados, pedir confirmação
+                if (hasExistingData) {
+                    if (!confirm(confirmMessage)) {
+                        this.showStatusMessage('info', 'Importação cancelada pelo usuário.');
+                        return;
+                    }
+                }
+                
+                // Importar clientes
+                if (importData.data.clients && importData.data.clients.length > 0) {
+                    try {
+                        // Limpar clientes existentes
+                        if (typeof DB.clients.clear === 'function') {
+                            await DB.clients.clear();
+                        } else {
+                            // Alternativa: obter todos os clientes e excluí-los um por um
+                            const existingClients = await DB.clients.getAll();
+                            for (const client of existingClients) {
+                                await DB.clients.delete(client.id);
+                            }
                         }
-                    });
-                    
-                    document.getElementById('btn-cancel').addEventListener('click', () => {
-                        confirmDialog.remove();
-                        this.elements.importFileInput.value = '';
-                        resolve();
-                    });
-                });
+                        
+                        // Adicionar novos clientes
+                        const clientPromises = importData.data.clients.map(client => {
+                            // Remover ID para evitar conflitos
+                            const { id, ...clientData } = client;
+                            return DB.clients.add(clientData);
+                        });
+                        
+                        await Promise.all(clientPromises);
+                        console.log(`${importData.data.clients.length} clientes importados com sucesso.`);
+                    } catch (error) {
+                        console.error('Erro ao importar clientes:', error);
+                        throw new Error(`Erro ao importar clientes: ${error.message}`);
+                    }
+                }
                 
+                // Importar serviços
+                if (importData.data.services && importData.data.services.length > 0) {
+                    try {
+                        // Verificar se a função clear existe
+                        if (typeof DB.services.clear === 'function') {
+                            // Limpar serviços existentes
+                            await DB.services.clear();
+                        } else {
+                            // Alternativa: obter todos os serviços e excluí-los um por um
+                            const existingServices = await DB.services.getAll();
+                            for (const service of existingServices) {
+                                await DB.services.delete(service.id);
+                            }
+                        }
+                        
+                        // Adicionar novos serviços
+                        const servicePromises = importData.data.services.map(service => {
+                            // Remover ID para evitar conflitos
+                            const { id, ...serviceData } = service;
+                            return DB.services.add(serviceData);
+                        });
+                        
+                        await Promise.all(servicePromises);
+                        console.log(`${importData.data.services.length} serviços importados com sucesso.`);
+                        
+                        // Extrair categorias personalizadas
+                        const categories = [...new Set(importData.data.services.map(service => service.category))];
+                        
+                        // Salvar categorias no localStorage
+                        try {
+                            localStorage.setItem('customCategories', JSON.stringify(categories));
+                        } catch (error) {
+                            console.error('Erro ao salvar categorias personalizadas:', error);
+                        }
+                    } catch (error) {
+                        console.error('Erro ao importar serviços:', error);
+                        throw new Error(`Erro ao importar serviços: ${error.message}`);
+                    }
+                }
+                
+                // Recarregar componentes
+                if (typeof ClientsComponent !== 'undefined' && ClientsComponent.loadClients) {
+                    ClientsComponent.loadClients();
+                }
+                
+                if (typeof ServicesComponent !== 'undefined' && ServicesComponent.loadServices) {
+                    ServicesComponent.loadServices();
+                }
+                
+                this.showStatusMessage('success', 'Dados importados com sucesso!');
             } catch (error) {
                 console.error('Erro ao importar dados:', error);
-                this.showStatus('Erro ao importar dados: ' + error.message, 'error');
-                if (this.elements.importFileInput) {
-                    this.elements.importFileInput.value = '';
-                }
+                this.showStatusMessage('error', `Erro ao importar dados: ${error.message}`);
             }
         };
         
         reader.onerror = () => {
-            this.showStatus('Erro ao ler o arquivo', 'error');
-            if (this.elements.importFileInput) {
-                this.elements.importFileInput.value = '';
-            }
+            this.showStatusMessage('error', 'Erro ao ler o arquivo.');
         };
         
         reader.readAsText(file);
     },
     
     // Limpar todos os dados
-    clearAllData: async function() {
-        if (confirm('ATENÇÃO: Esta ação excluirá TODOS os seus dados e não pode ser desfeita. Deseja continuar?')) {
-            if (confirm('Tem certeza? Todos os clientes e configurações serão perdidos.')) {
-                try {
-                    await this.clearDatabase();
-                    localStorage.clear();
+    clearAllData: function() {
+        if (confirm('ATENÇÃO: Esta ação irá apagar TODOS os seus dados e não pode ser desfeita. Deseja continuar?')) {
+            Promise.all([
+                DB.clients.clear(),
+                DB.services.clear()
+            ])
+                .then(() => {
+                    // Recarregar componentes
+                    if (typeof ClientsComponent !== 'undefined' && ClientsComponent.loadClients) {
+                        ClientsComponent.loadClients();
+                    }
                     
-                    this.showStatus('Todos os dados foram excluídos. Recarregando a página...', 'success');
+                    if (typeof ServicesComponent !== 'undefined' && ServicesComponent.loadServices) {
+                        ServicesComponent.loadServices();
+                    }
                     
-                    // Recarregar a página após 2 segundos
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
-                } catch (error) {
+                    // Limpar categorias personalizadas
+                    localStorage.removeItem('customCategories');
+                    
+                    this.showStatusMessage('success', 'Todos os dados foram apagados com sucesso.');
+                })
+                .catch(error => {
                     console.error('Erro ao limpar dados:', error);
-                    this.showStatus('Erro ao limpar dados: ' + error.message, 'error');
-                }
-            }
+                    this.showStatusMessage('error', 'Erro ao limpar dados. Tente novamente.');
+                });
         }
-    },
-    
-    // Limpar banco de dados
-    clearDatabase: async function() {
-        return new Promise((resolve, reject) => {
-            try {
-                const transaction = DB.db.transaction(['clients'], 'readwrite');
-                const clientsStore = transaction.objectStore('clients');
-                
-                const clearRequest = clientsStore.clear();
-                
-                clearRequest.onsuccess = () => {
-                    console.log('Banco de dados limpo com sucesso');
-                    resolve();
-                };
-                
-                clearRequest.onerror = (event) => {
-                    reject(new Error('Erro ao limpar banco de dados: ' + event.target.error));
-                };
-            } catch (error) {
-                reject(error);
-            }
-        });
     },
     
     // Mostrar mensagem de status
-    showStatus: function(message, type) {
-        if (this.elements.importStatus) {
-            this.elements.importStatus.textContent = message;
-            this.elements.importStatus.className = 'status-message ' + type;
+    showStatusMessage: function(type, message) {
+        const statusElement = document.getElementById('import-status');
+        if (statusElement) {
+            statusElement.textContent = message;
+            statusElement.className = `status-message ${type}`;
             
-            // Limpar mensagem após 5 segundos
+            // Esconder mensagem após 5 segundos
             setTimeout(() => {
-                this.elements.importStatus.className = 'status-message';
-                this.elements.importStatus.textContent = '';
+                statusElement.className = 'status-message';
             }, 5000);
-        }
-    },
-    
-    // Formatar data para nome de arquivo
-    formatDate: function(date) {
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        
-        return `${year}${month}${day}_${hours}${minutes}`;
-    },
-    
-    // Adicione esta nova função para processar a importação
-    processImport: async function(jsonData, replaceAll) {
-        try {
-            // Se for para substituir, limpar o banco de dados primeiro
-            if (replaceAll) {
-                await this.clearDatabase();
-            }
-            
-            // Importar clientes
-            if (jsonData.data.clients && Array.isArray(jsonData.data.clients)) {
-                const clientPromises = jsonData.data.clients.map(client => {
-                    // Remover ID para evitar conflitos
-                    const { id, ...clientData } = client;
-                    return DB.clients.add(clientData);
-                });
-                
-                await Promise.all(clientPromises);
-            }
-            
-            // Mostrar mensagem de sucesso
-            this.showStatus('Dados importados com sucesso! Recarregando a página...', 'success');
-            
-            // Recarregar a página após 2 segundos
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        } catch (error) {
-            console.error('Erro ao processar importação:', error);
-            this.showStatus('Erro ao processar importação: ' + error.message, 'error');
         }
     }
 };

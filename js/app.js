@@ -35,6 +35,68 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Função para inicializar dados de exemplo
+    function initSampleData() {
+        return new Promise((resolve, reject) => {
+            // Verificar se já existem dados
+            Promise.all([
+                DB.clients.getAll(),
+                DB.services.getAll()
+            ])
+                .then(([clients, services]) => {
+                    if (clients.length === 0 && services.length === 0) {
+                        console.log('Nenhum dado encontrado. Importando dados de exemplo...');
+                        
+                        // Carregar arquivo de exemplo
+                        fetch('assets/sample_import.json')
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Erro ao buscar arquivo: ${response.status} ${response.statusText}`);
+                                }
+                                return response.json();
+                            })
+                            .then(sampleData => {
+                                // Importar clientes
+                                const clientPromises = sampleData.data.clients.map(client => DB.clients.add(client));
+                                
+                                // Importar serviços
+                                const servicePromises = sampleData.data.services.map(service => DB.services.add(service));
+                                
+                                // Aguardar todas as importações
+                                return Promise.all([...clientPromises, ...servicePromises]);
+                            })
+                            .then(() => {
+                                console.log('Dados de exemplo importados com sucesso');
+                                
+                                // Extrair e salvar categorias personalizadas
+                                fetch('assets/sample_import.json')
+                                    .then(response => response.json())
+                                    .then(sampleData => {
+                                        const categories = [...new Set(sampleData.data.services.map(service => service.category))];
+                                        localStorage.setItem('customCategories', JSON.stringify(categories));
+                                    })
+                                    .catch(error => {
+                                        console.error('Erro ao salvar categorias personalizadas:', error);
+                                    });
+                                
+                                resolve();
+                            })
+                            .catch(error => {
+                                console.error('Erro ao importar dados de exemplo:', error);
+                                resolve(); // Resolve mesmo com erro para não bloquear a aplicação
+                            });
+                    } else {
+                        console.log('Já existem dados no banco de dados');
+                        resolve();
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao verificar dados existentes:', error);
+                    resolve(); // Resolve mesmo com erro para não bloquear a aplicação
+                });
+        });
+    }
+
     // Aplicar configurações salvas antes de inicializar componentes
     applyStoredSettings();
     
@@ -58,6 +120,25 @@ document.addEventListener('DOMContentLoaded', () => {
                             clientsElement.innerHTML = `
                                 <div class="error-message">
                                     <p>Erro ao carregar o componente de clientes.</p>
+                                    <p>Detalhes: ${error.message}</p>
+                                </div>
+                            `;
+                        }
+                    });
+            }
+            return Promise.resolve();
+        })
+        .then(() => {
+            // Inicializar componente de serviços
+            if (typeof ServicesComponent !== 'undefined') {
+                return ServicesComponent.init()
+                    .catch(error => {
+                        console.error('Erro ao inicializar componente de serviços:', error);
+                        const servicesElement = document.getElementById('services');
+                        if (servicesElement) {
+                            servicesElement.innerHTML = `
+                                <div class="error-message">
+                                    <p>Erro ao carregar o componente de serviços.</p>
                                     <p>Detalhes: ${error.message}</p>
                                 </div>
                             `;

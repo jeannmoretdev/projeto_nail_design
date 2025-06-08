@@ -8,7 +8,7 @@
         "phone": "(11) 99876-5432",
         "birthday": "10/05",
         "location": "Pinheiros",
-        "services": "Unhas de fibra, Decoração com strass",
+        "services": "Colocação Fibra, Decoração com strass",
         "notes": "Prefere cores vibrantes e designs elaborados"
       },
       {
@@ -16,7 +16,7 @@
         "phone": "(11) 98765-4321",
         "birthday": "22/08",
         "location": "Itaim Bibi",
-        "services": "Esmaltação em gel, Nail art minimalista",
+        "services": "Colocação Gel, Nail art minimalista",
         "notes": "Gosta de designs elegantes e discretos"
       },
       {
@@ -24,7 +24,7 @@
         "phone": "(11) 97654-3210",
         "birthday": "15/03",
         "location": "Perdizes",
-        "services": "Alongamento de unhas, Francesinha",
+        "services": "Manutenção Fibra, Francesinha",
         "notes": "Sempre marca para o final da tarde"
       },
       {
@@ -32,7 +32,7 @@
         "phone": "(11) 96543-2109",
         "birthday": "30/11",
         "location": "Vila Olímpia",
-        "services": "Unhas de gel, Decoração com adesivos",
+        "services": "Manutenção Gel, Decoração com adesivos",
         "notes": "Alérgica a alguns produtos, verificar antes"
       },
       {
@@ -40,8 +40,82 @@
         "phone": "(11) 95432-1098",
         "birthday": "05/07",
         "location": "Brooklin",
-        "services": "Manicure tradicional, Pedicure",
+        "services": "Blindagem, Esmaltação simples",
         "notes": "Prefere cores neutras e acabamento natural"
+      }
+    ],
+    "services": [
+      {
+        "name": "Colocação de Fibra de Vidro",
+        "category": "Colocação Fibra",
+        "price": 130.00,
+        "description": "Alongamento com fibra de vidro, mais resistente e natural."
+      },
+      {
+        "name": "Manutenção de Fibra",
+        "category": "Manutenção Fibra",
+        "price": 90.00,
+        "description": "Manutenção de unhas em fibra de vidro, incluindo correções e reposicionamento."
+      },
+      {
+        "name": "Colocação de Gel",
+        "category": "Colocação Gel",
+        "price": 120.00,
+        "description": "Aplicação de unhas em gel com molde ou tips."
+      },
+      {
+        "name": "Manutenção de Gel",
+        "category": "Manutenção Gel",
+        "price": 80.00,
+        "description": "Manutenção de unhas em gel, incluindo correções e reposicionamento."
+      },
+      {
+        "name": "Blindagem em Gel",
+        "category": "Blindagem",
+        "price": 70.00,
+        "description": "Proteção das unhas naturais com camada de gel para fortalecimento."
+      },
+      {
+        "name": "Blindagem com Fibra",
+        "category": "Blindagem",
+        "price": 80.00,
+        "description": "Proteção das unhas naturais com fibra de vidro para maior resistência."
+      },
+      {
+        "name": "Decoração Simples",
+        "category": "Colocação Fibra",
+        "price": 15.00,
+        "description": "Decoração simples com adesivos, strass ou desenhos básicos."
+      },
+      {
+        "name": "Decoração Elaborada",
+        "category": "Colocação Gel",
+        "price": 35.00,
+        "description": "Decoração complexa com desenhos detalhados, efeitos 3D ou pedrarias."
+      },
+      {
+        "name": "Francesinha",
+        "category": "Manutenção Fibra",
+        "price": 40.00,
+        "description": "Esmaltação no estilo francês, com ponta branca e base nude."
+      },
+      {
+        "name": "Esmaltação em Gel",
+        "category": "Manutenção Gel",
+        "price": 50.00,
+        "description": "Aplicação de esmalte em gel com secagem em cabine UV/LED."
+      },
+      {
+        "name": "Remoção de Alongamento",
+        "category": "Manutenção Fibra",
+        "price": 40.00,
+        "description": "Remoção segura de unhas em gel, acrílico ou fibra."
+      },
+      {
+        "name": "Spa de Mãos",
+        "category": "Blindagem",
+        "price": 60.00,
+        "description": "Esfoliação, hidratação profunda, massagem e parafina para mãos."
       }
     ]
   }

@@ -1,3 +1,7 @@
+@import 'clients.css';
+@import 'services.css';
+@import 'categories.css';
+
 :root {
     /* Cores base */
     --primary-color: #d1bab4;

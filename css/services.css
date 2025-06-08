@@ -1,0 +1,342 @@
+/* Estilos para o componente de serviços */
+
+.services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.service-card {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.service-summary {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.service-info {
+    flex: 1;
+}
+
+.service-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.service-mini-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.service-category, .service-price {
+    display: flex;
+    align-items: center;
+}
+
+.service-category i, .service-price i {
+    margin-right: 5px;
+    color: var(--primary-color);
+}
+
+.service-price {
+    font-weight: 600;
+    color: var(--success);
+}
+
+.service-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.edit-btn:hover {
+    background-color: var(--primary-light);
+}
+
+.delete-btn:hover {
+    background-color: var(--error);
+    color: var(--white);
+}
+
+.edit-btn i {
+    color: var(--primary-color);
+}
+
+.delete-btn i {
+    color: var(--error);
+}
+
+.service-details {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.service-details.active {
+    padding: 15px;
+    max-height: 200px;
+    border-top: 1px solid var(--primary-light);
+}
+
+.detail-item {
+    margin-bottom: 10px;
+}
+
+.detail-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.detail-value {
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+/* Estilo para categorias */
+.category-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+/* Estilo para o campo de nova categoria */
+#new-category-group {
+    background-color: var(--primary-light);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+#new-category {
+    border: 1px solid var(--primary-color);
+}
+
+/* Estilo para as categorias no card de serviço */
+.service-category {
+    background-color: var(--primary-light);
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.service-category i {
+    margin-right: 5px;
+    color: var(--primary-color);
+}
+
+/* Animação para o campo de nova categoria */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#new-category-group.visible {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Estilos para o dropdown de categorias */
+.category-select-container {
+    position: relative;
+    width: 100%;
+}
+
+.category-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--primary-light);
+    border-radius: 5px;
+    background-color: var(--card-background);
+    color: var(--text-color);
+    font-size: 1rem;
+    appearance: none; /* Remove a seta padrão */
+    cursor: pointer;
+}
+
+.category-select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--primary-dark);
+}
+
+/* Estilos para o gerenciamento de categorias */
+.category-management {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: var(--primary-light);
+    border-radius: 5px;
+}
+
+.category-management h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--primary-dark);
+    font-size: 1rem;
+}
+
+.category-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    background-color: var(--card-background);
+    border-radius: 4px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.category-name {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.category-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.category-edit-btn, .category-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.category-edit-btn {
+    color: var(--primary-dark);
+}
+
+.category-delete-btn {
+    color: var(--error);
+}
+
+.category-edit-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.category-delete-btn:hover {
+    background-color: var(--error);
+    color: var(--white);
+}
+
+.category-edit-form {
+    display: flex;
+    margin-top: 5px;
+}
+
+.category-edit-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid var(--primary-light);
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.category-save-btn, .category-cancel-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.category-save-btn {
+    background-color: var(--primary-color);
+    color: var(--white);
+    margin-right: 5px;
+}
+
+.category-cancel-btn {
+    background-color: #eee;
+    color: var(--text-color);
+}
+
+.category-save-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.category-cancel-btn:hover {
+    background-color: #ddd;
+}
+
+/* Estilos para o botão de adicionar nova categoria */
+.add-category-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.add-category-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.add-category-form {
+    display: flex;
+    margin-top: 10px;
+}
+
+.add-category-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid var(--primary-light);
+    border-radius: 4px;
+    margin-right: 5px;
+}
