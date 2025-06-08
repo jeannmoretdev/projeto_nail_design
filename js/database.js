@@ -5,8 +5,8 @@ const DB = {
     // Inicializar banco de dados
     init: function() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open('NailDesignDB', 2); // Incrementar a versão
-            
+            const request = indexedDB.open('NailDesignDB', 3); // Incrementar a versão
+        
             request.onerror = (event) => {
                 console.error('Erro ao abrir banco de dados:', event.target.error);
                 reject(new Error('Não foi possível abrir o banco de dados'));
@@ -32,6 +32,15 @@ const DB = {
                     const servicesStore = db.createObjectStore('services', { keyPath: 'id', autoIncrement: true });
                     servicesStore.createIndex('name', 'name', { unique: false });
                     servicesStore.createIndex('category', 'category', { unique: false });
+                }
+                
+                // Criar ou verificar o object store de compromissos
+                if (!db.objectStoreNames.contains('appointments')) {
+                    const appointmentsStore = db.createObjectStore('appointments', { keyPath: 'id', autoIncrement: true });
+                    appointmentsStore.createIndex('startDate', 'startDate', { unique: false });
+                    appointmentsStore.createIndex('clientId', 'clientId', { unique: false });
+                    appointmentsStore.createIndex('serviceId', 'serviceId', { unique: false });
+                    appointmentsStore.createIndex('status', 'status', { unique: false });
                 }
             };
         });
@@ -318,6 +327,227 @@ const DB = {
                     
                     request.onerror = (event) => {
                         reject(new Error('Erro ao limpar serviços: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+    },
+    
+    // Operações com compromissos
+    appointments: {
+        // Adicionar compromisso
+        add: function(appointment) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readwrite');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.add(appointment);
+                    
+                    request.onsuccess = () => {
+                        resolve(request.result);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao adicionar compromisso: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Atualizar compromisso
+        update: function(appointment) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readwrite');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.put(appointment);
+                    
+                    request.onsuccess = () => {
+                        resolve(true);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao atualizar compromisso: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Excluir compromisso
+        delete: function(id) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readwrite');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.delete(id);
+                    
+                    request.onsuccess = () => {
+                        resolve(true);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao excluir compromisso: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Obter compromisso por ID
+        getById: function(id) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readonly');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.get(id);
+                    
+                    request.onsuccess = () => {
+                        resolve(request.result);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao buscar compromisso: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Obter todos os compromissos
+        getAll: function() {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readonly');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.getAll();
+                    
+                    request.onsuccess = () => {
+                        resolve(request.result);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Obter compromissos por intervalo de datas
+        getByDateRange: function(startDate, endDate) {
+            return new Promise((resolve, reject) => {
+                try {
+                    // Converter para timestamps para comparação
+                    const startTimestamp = startDate.getTime();
+                    const endTimestamp = endDate.getTime();
+                    
+                    const transaction = DB.db.transaction(['appointments'], 'readonly');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.getAll();
+                    
+                    request.onsuccess = () => {
+                        const appointments = request.result;
+                        
+                        // Filtrar compromissos dentro do intervalo de datas
+                        const filteredAppointments = appointments.filter(appointment => {
+                            const appointmentStartDate = new Date(appointment.startDate);
+                            const appointmentStartTimestamp = appointmentStartDate.getTime();
+                            
+                            return appointmentStartTimestamp >= startTimestamp && 
+                                   appointmentStartTimestamp <= endTimestamp;
+                        });
+                        
+                        resolve(filteredAppointments);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Obter compromissos por cliente
+        getByClient: function(clientId) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readonly');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.getAll();
+                    
+                    request.onsuccess = () => {
+                        const appointments = request.result;
+                        
+                        // Filtrar compromissos do cliente
+                        const clientAppointments = appointments.filter(appointment => 
+                            appointment.clientId === clientId
+                        );
+                        
+                        resolve(clientAppointments);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Obter compromissos por serviço
+        getByService: function(serviceId) {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readonly');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.getAll();
+                    
+                    request.onsuccess = () => {
+                        const appointments = request.result;
+                        
+                        // Filtrar compromissos do serviço
+                        const serviceAppointments = appointments.filter(appointment => 
+                            appointment.serviceId === serviceId
+                        );
+                        
+                        resolve(serviceAppointments);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao buscar compromissos: ' + event.target.error));
+                    };
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        
+        // Limpar todos os compromissos
+        clear: function() {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = DB.db.transaction(['appointments'], 'readwrite');
+                    const store = transaction.objectStore('appointments');
+                    const request = store.clear();
+                    
+                    request.onsuccess = () => {
+                        resolve(true);
+                    };
+                    
+                    request.onerror = (event) => {
+                        reject(new Error('Erro ao limpar compromissos: ' + event.target.error));
                     };
                 } catch (error) {
                     reject(error);

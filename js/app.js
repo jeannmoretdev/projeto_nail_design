@@ -148,6 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return Promise.resolve();
         })
         .then(() => {
+            // Adicionar ao evento DOMContentLoaded, após a inicialização dos outros componentes
+            // Inicializar componente de agenda
+            AgendaComponent.init().catch(error => {
+                console.error('Erro ao inicializar componente de agenda:', error);
+            });
+        })
+        .then(() => {
             // Inicializar componente de configurações
             if (typeof SettingsComponent !== 'undefined') {
                 return SettingsComponent.init()

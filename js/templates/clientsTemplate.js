@@ -32,12 +32,13 @@ const TemplateLoader = {
                         
                         <div class="form-group">
                             <label for="client-phone">Telefone</label>
-                            <input type="tel" id="client-phone" required>
+                            <input type="tel" id="client-phone" required inputmode="tel">
                         </div>
                         
                         <div class="form-group">
                             <label for="client-birthday">Data de Aniversário</label>
-                            <input type="text" id="client-birthday" placeholder="DD/MM" maxlength="5">
+                            <input type="text" id="client-birthday" placeholder="DD/MM" maxlength="5" inputmode="numeric">
+                            <small class="form-hint">Formato: DD/MM</small>
                         </div>
                         
                         <div class="form-group">

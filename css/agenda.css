@@ -1,0 +1,815 @@
+/* Estilos para o componente de agenda */
+
+.agenda-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.period-navigation {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: all 0.2s;
+}
+
+.nav-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.today-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.today-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.current-period {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.view-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.view-btn {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: all 0.2s;
+}
+
+.view-btn:hover {
+    background-color: var(--primary-light);
+}
+
+.view-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Estilos para o container da agenda */
+.agenda-container {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    min-height: 500px;
+    position: relative;
+}
+
+/* Estilos para a visualização de dia */
+.day-view {
+    display: flex;
+    height: 960px; /* 16 horas (7h-22h) * 60px por hora */
+    position: relative;
+}
+
+.day-view .time-column {
+    width: 60px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border-color);
+    background-color: var(--background-light);
+}
+
+.day-view .time-slot {
+    height: 60px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 5px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.day-view .day-column {
+    flex-grow: 1;
+    position: relative;
+}
+
+.day-view .day-header {
+    height: 60px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background-color: var(--primary-light);
+}
+
+.day-view .day-header .date-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-right: 10px;
+}
+
+.day-view .day-header .date-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.day-view .day-header .weekday {
+    font-weight: 500;
+    color: var(--primary-dark);
+}
+
+.day-view .day-header .month {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.day-view .day-grid {
+    position: relative;
+    height: 900px; /* 15 horas * 60px */
+}
+
+/* Estilos para a visualização de semana */
+.week-view {
+    display: flex;
+    height: 960px; /* 16 horas (7h-22h) * 60px por hora */
+}
+
+.week-view .time-column {
+    width: 60px;
+    border-right: 1px solid var(--border-color);
+    padding-top: 60px; /* Espaço para o cabeçalho */
+}
+
+.week-view .time-slot {
+    height: 60px; /* 1 hora = 60px */
+    border-bottom: 1px solid var(--border-light);
+    text-align: right;
+    padding-right: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.week-view .day-columns {
+    display: flex;
+    flex-grow: 1;
+}
+
+.week-view .day-column {
+    flex: 1;
+    border-right: 1px solid var(--border-color);
+}
+
+.week-view .day-column:last-child {
+    border-right: none;
+}
+
+.week-view .day-column.today {
+    background-color: rgba(var(--primary-rgb), 0.05);
+}
+
+.week-view .day-header {
+    height: 60px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.week-view .day-header .weekday {
+    font-size: 0.9rem;
+}
+
+.week-view .day-header .date {
+    font-size: 1.2rem;
+}
+
+.week-view .day-grid {
+    height: 540px; /* 24 horas - 60px de cabeçalho */
+    position: relative;
+}
+
+/* Estilos para a visualização de mês */
+.month-view {
+    display: flex;
+    flex-direction: column;
+    height: 800px;
+}
+
+.month-view .weekdays {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.month-view .weekday {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.month-view .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    flex-grow: 1;
+}
+
+.month-view .day-cell {
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+.month-view .day-cell:nth-child(7n) {
+    border-right: none;
+}
+
+.month-view .day-cell.other-month {
+    background-color: var(--background-light);
+    color: var(--text-secondary);
+}
+
+.month-view .day-cell.today {
+    background-color: rgba(var(--primary-rgb), 0.1);
+}
+
+.month-view .day-number {
+    font-weight: 500;
+    margin-bottom: 5px;
+    text-align: right;
+}
+
+.month-view .today .day-number {
+    background-color: var(--primary-color);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.month-view .day-appointments {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Estilos para os eventos/compromissos */
+.appointment {
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    background-color: var(--primary-light);
+    border-left: 3px solid var(--primary-color);
+    border-radius: 3px;
+    padding: 5px;
+    font-size: 0.85rem;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 1;
+    transition: all 0.2s;
+}
+
+.appointment:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 3;
+}
+
+.appointment.status-agendado {
+    background-color: var(--primary-light);
+    border-left: 3px solid var(--primary-color);
+}
+
+.appointment.status-concluido {
+    background-color: var(--success-light);
+    border-left: 3px solid var(--success);
+}
+
+.appointment.status-cancelado {
+    background-color: var(--danger-light);
+    border-left: 3px solid var(--danger-color);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.appointment .appointment-time {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.appointment .appointment-title {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.appointment .appointment-client {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Versão compacta para visualização mensal */
+.month-view .appointment {
+    height: 18px;
+    margin: 1px 0;
+    padding: 2px 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.8rem;
+    position: relative;
+    left: 0;
+    right: 0;
+}
+
+.month-view .more-events {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+    padding: 2px 5px;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.month-view .more-events:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Estilos para o modal de detalhes do compromisso */
+.appointment-details-modal {
+    position: absolute;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    z-index: 1000;
+    min-width: 250px;
+    max-width: 350px;
+    border-top: 4px solid var(--primary-color);
+}
+
+.appointment-details-modal.status-agendado {
+    border-top-color: var(--primary-color);
+}
+
+.appointment-details-modal.status-concluido {
+    border-top-color: var(--success);
+}
+
+.appointment-details-modal.status-cancelado {
+    border-top-color: var(--danger-color);
+}
+
+.appointment-details-modal .appointment-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.appointment-details-modal .appointment-time {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+}
+
+.appointment-details-modal .appointment-time i {
+    margin-right: 5px;
+    color: var(--primary-color);
+}
+
+.appointment-details-modal .appointment-info {
+    margin-bottom: 15px;
+}
+
+.appointment-details-modal .appointment-info div {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.appointment-details-modal .appointment-info i {
+    margin-right: 8px;
+    width: 16px;
+    color: var(--primary-color);
+}
+
+.appointment-details-modal .appointment-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.appointment-details-modal .edit-btn,
+.appointment-details-modal .delete-btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.appointment-details-modal .edit-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.appointment-details-modal .edit-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.appointment-details-modal .delete-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.appointment-details-modal .delete-btn:hover {
+    background-color: var(--danger-dark);
+}
+
+.appointment-details-modal .close-details-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.appointment-details-modal .close-details-btn:hover {
+    color: var(--primary-color);
+}
+
+/* Estilos para o formulário de compromisso */
+#appointment-modal .modal-content {
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+#appointment-modal h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#appointment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#appointment-form .form-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+#appointment-form .form-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+#appointment-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+#appointment-form input[type="text"],
+#appointment-form input[type="date"],
+#appointment-form input[type="time"],
+#appointment-form select,
+#appointment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+#appointment-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+#appointment-form select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><path d="M0 0l6 6 6-6z" fill="%23666"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+/* Estilos para os selects de cliente e serviço */
+#appointment-client,
+#appointment-service {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilização para optgroup */
+#appointment-service optgroup {
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: var(--primary-light);
+    padding: 5px;
+}
+
+#appointment-service option {
+    padding: 8px;
+    background-color: var(--white);
+    color: var(--text-color);
+}
+
+/* Estilos para o grupo de radio buttons */
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background-color: var(--background-light);
+    transition: all 0.2s;
+}
+
+.radio-label:hover {
+    background-color: var(--primary-light);
+}
+
+.radio-label input[type="radio"] {
+    margin-right: 8px;
+    accent-color: var(--primary-color);
+}
+
+/* Estilos para o select de status */
+#appointment-status {
+    font-weight: 500;
+}
+
+#appointment-status option[value="agendado"] {
+    color: var(--primary-color);
+}
+
+#appointment-status option[value="concluido"] {
+    color: var(--success);
+}
+
+#appointment-status option[value="cancelado"] {
+    color: var(--danger-color);
+}
+
+/* Estilos para os botões de ação */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-save, .btn-cancel {
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-save {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-save:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-cancel {
+    background-color: var(--background-light);
+    color: var(--text-color);
+}
+
+.btn-cancel:hover {
+    background-color: var(--border-color);
+}
+
+/* Estilos para o filtro de datas */
+.date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 15px;
+}
+
+.date-filter label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.date-filter input[type="date"] {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--white);
+}
+
+.date-filter-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.date-filter-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Estilos para os compromissos com status diferentes */
+.appointment.status-agendado {
+    background-color: var(--primary-light);
+    border-left: 3px solid var(--primary-color);
+}
+
+.appointment.status-concluido {
+    background-color: var(--success-light);
+    border-left: 3px solid var(--success);
+}
+
+.appointment.status-cancelado {
+    background-color: var(--danger-light);
+    border-left: 3px solid var(--danger-color);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* Indicador de carregamento */
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--primary-color);
+}
+
+.loading-spinner i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* Mensagem de nenhum compromisso */
+.no-appointments {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* Linhas de grade para as horas */
+.hour-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+/* Linha para a hora atual */
+.current-time-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--danger-color);
+    z-index: 2;
+}
+
+.current-time-marker {
+    position: absolute;
+    left: -5px;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--danger-color);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .agenda-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .period-navigation {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .view-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .view-btn {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .week-view .day-column {
+        min-width: 100px;
+    }
+    
+    .day-header .weekday {
+        font-size: 0.8rem;
+    }
+    
+    .month-view .weekday {
+        font-size: 0.8rem;
+        padding: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .week-view {
+        overflow-x: auto;
+    }
+    
+    .week-view .day-column {
+        min-width: 150px;
+    }
+    
+    .month-view .weekday {
+        font-size: 0.7rem;
+        padding: 3px;
+    }
+}

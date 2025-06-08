@@ -103,11 +103,54 @@ const ClientsComponent = {
             this.elements.birthdayInput.addEventListener('input', (e) => {
                 let value = e.target.value.replace(/\D/g, '');
                 
-                if (value.length > 2) {
-                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                if (value.length > 0) {
+                    // Formatar como DD/MM
+                    if (value.length <= 2) {
+                        // Apenas os dígitos do dia
+                        value = value;
+                    } else {
+                        // Adicionar a barra após os dois primeiros dígitos
+                        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    }
                 }
                 
                 e.target.value = value;
+            });
+            
+            // Validar o formato ao perder o foco
+            this.elements.birthdayInput.addEventListener('blur', (e) => {
+                const value = e.target.value;
+                if (value && value.length > 0) {
+                    // Verificar se está no formato correto
+                    if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])$/.test(value)) {
+                        // Se não estiver no formato correto, tentar corrigir
+                        let digits = value.replace(/\D/g, '');
+                        
+                        // Garantir que temos pelo menos 4 dígitos
+                        if (digits.length < 4) {
+                            digits = digits.padEnd(4, '0');
+                        }
+                        
+                        // Formatar como DD/MM
+                        const day = digits.substring(0, 2);
+                        const month = digits.substring(2, 4);
+                        
+                        // Validar dia e mês
+                        let validDay = parseInt(day, 10);
+                        let validMonth = parseInt(month, 10);
+                        
+                        if (validDay < 1) validDay = 1;
+                        if (validDay > 31) validDay = 31;
+                        if (validMonth < 1) validMonth = 1;
+                        if (validMonth > 12) validMonth = 12;
+                        
+                        // Formatar com zeros à esquerda
+                        const formattedDay = validDay.toString().padStart(2, '0');
+                        const formattedMonth = validMonth.toString().padStart(2, '0');
+                        
+                        e.target.value = `${formattedDay}/${formattedMonth}`;
+                    }
+                }
             });
         }
         

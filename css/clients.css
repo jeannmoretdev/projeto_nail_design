@@ -135,3 +135,43 @@
     font-size: 0.95rem;
     color: var(--text-primary);
 }
+
+/* Estilos específicos para campos de entrada em dispositivos móveis */
+input[inputmode="numeric"],
+input[inputmode="tel"] {
+    font-size: 16px; /* Evita zoom automático em iOS */
+    -webkit-appearance: none; /* Remove a aparência padrão em iOS */
+    -moz-appearance: textfield; /* Remove a aparência padrão em Firefox */
+    appearance: none;
+}
+
+/* Melhorar a visualização do campo de aniversário */
+#client-birthday {
+    letter-spacing: 1px; /* Espaçamento entre caracteres para melhor legibilidade */
+    text-align: center; /* Centralizar o texto */
+    font-weight: 500; /* Texto um pouco mais forte */
+}
+
+/* Estilo para o hint abaixo do campo */
+.form-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Melhorar a visualização em telas pequenas */
+@media (max-width: 480px) {
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    input, select, textarea {
+        padding: 12px; /* Aumentar área de toque */
+    }
+    
+    /* Aumentar o tamanho do texto do placeholder para melhor legibilidade */
+    ::placeholder {
+        font-size: 14px;
+    }
+}
