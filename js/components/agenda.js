@@ -304,10 +304,31 @@ const AgendaComponent = {
         
         // Salvar compromisso
         if (this.elements.appointmentForm) {
-            this.elements.appointmentForm.addEventListener('submit', function(event) {
+            const form = this.elements.appointmentForm;
+            
+            // Remover handlers existentes para evitar duplicação
+            const clonedForm = form.cloneNode(true);
+            form.parentNode.replaceChild(clonedForm, form);
+            this.elements.appointmentForm = clonedForm;
+            
+            // Adicionar handler de submit
+            clonedForm.addEventListener('submit', function(event) {
                 event.preventDefault();
+                event.stopPropagation();
                 self.saveAppointment();
+                return false;
             });
+            
+            // Adicionar handler de clique no botão de salvar como backup
+            const saveButton = clonedForm.querySelector('.btn-save');
+            if (saveButton) {
+                saveButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    self.saveAppointment();
+                    return false;
+                });
+            }
         }
         
         // Configurar selects de cliente e serviço com opções para cadastro
@@ -1085,7 +1106,9 @@ const AgendaComponent = {
             // Preço é opcional
             let price = 0;
             if (priceInput && priceInput.value) {
-                const priceValue = parseFloat(priceInput.value.replace(',', '.'));
+                // Remover qualquer caractere que não seja número ou vírgula
+                const cleanValue = priceInput.value.replace(/[^\d,]/g, '').replace(',', '.');
+                const priceValue = parseFloat(cleanValue);
                 if (!isNaN(priceValue)) {
                     price = priceValue;
                 }
@@ -1136,7 +1159,7 @@ const AgendaComponent = {
                 return DB.appointments.update(appointment)
                     .then(() => {
                         // Atualizar calendário
-                        this.refreshEvents();
+                        this.loadAppointments().catch(err => console.error('Erro ao recarregar compromissos:', err));
                         
                         // Fechar modal
                         if (this.elements.appointmentModal) {
@@ -1149,7 +1172,7 @@ const AgendaComponent = {
                 return DB.appointments.add(appointment)
                     .then((id) => {
                         // Atualizar calendário
-                        this.refreshEvents();
+                        this.loadAppointments().catch(err => console.error('Erro ao recarregar compromissos:', err));
                         
                         // Fechar modal
                         if (this.elements.appointmentModal) {
@@ -1438,6 +1461,30 @@ const AgendaComponent = {
         const serviceLabel = document.querySelector('label[for="appointment-service"]');
         if (serviceLabel) {
             serviceLabel.textContent = 'Serviço (opcional)';
+        }
+    },
+    // Método para atualizar eventos no calendário
+    refreshEvents: function() {
+        try {
+            // Verificar se o calendário está disponível
+            if (!this.calendar) {
+                console.error('Calendário não inicializado');
+                return Promise.reject(new Error('Calendário não inicializado'));
+            }
+            
+            // Recarregar compromissos do banco de dados
+            return this.loadAppointments()
+                .then(appointments => {
+                    console.log('Eventos atualizados com sucesso:', appointments.length);
+                    return appointments;
+                })
+                .catch(error => {
+                    console.error('Erro ao atualizar eventos:', error);
+                    throw error;
+                });
+        } catch (error) {
+            console.error('Erro ao atualizar eventos:', error);
+            return Promise.reject(error);
         }
     }
 };

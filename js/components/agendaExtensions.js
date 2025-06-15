@@ -384,16 +384,9 @@ const AgendaExtensions = {
                 document.getElementById('detail-duration').textContent = AgendaUtils.formatDuration(durationMinutes);
                 
                 // Mostrar preço
-                if (appointment.price) {
-                    let formattedPrice = '';
-                    if (typeof appointment.price === 'number') {
-                        formattedPrice = `R$ ${appointment.price.toFixed(2).replace('.', ',')}`;
-                    } else {
-                        formattedPrice = appointment.price.includes('R$') ? appointment.price : `R$ ${appointment.price}`;
-                    }
-                    document.getElementById('detail-price').textContent = formattedPrice;
-                } else {
-                    document.getElementById('detail-price').textContent = 'Não informado';
+                const priceElement = document.getElementById('detail-price');
+                if (priceElement) {
+                    priceElement.textContent = AgendaUtils.formatPrice(appointment.price);
                 }
                 
                 // Mostrar local

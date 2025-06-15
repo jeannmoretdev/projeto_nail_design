@@ -708,5 +708,33 @@ const AgendaUtils = {
         }
         
         return content;
+    },
+    
+    // Adicione esta função ao objeto AgendaUtils
+    formatPrice: function(price) {
+        if (price === null || price === undefined || price === '') {
+            return 'Não informado';
+        }
+        
+        try {
+            // Garantir que temos um número
+            let numericPrice = price;
+            if (typeof price === 'string') {
+                // Remover qualquer caractere que não seja número, ponto ou vírgula
+                numericPrice = price.replace(/[^\d.,]/g, '').replace(',', '.');
+                numericPrice = parseFloat(numericPrice);
+            }
+            
+            // Verificar se é um número válido
+            if (isNaN(numericPrice)) {
+                return 'Não informado';
+            }
+            
+            // Formatar com 2 casas decimais e substituir ponto por vírgula
+            return 'R$ ' + numericPrice.toFixed(2).replace('.', ',');
+        } catch (error) {
+            console.error('Erro ao formatar preço:', error, price);
+            return 'R$ ' + price;
+        }
     }
 };
